@@ -32,12 +32,12 @@
             this.singin = new System.Windows.Forms.RadioButton();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.singup = new System.Windows.Forms.RadioButton();
-            this.login = new System.Windows.Forms.TextBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.password = new System.Windows.Forms.TextBox();
-            this.label2 = new System.Windows.Forms.Label();
-            this.textBox1 = new System.Windows.Forms.TextBox();
-            this.label3 = new System.Windows.Forms.Label();
+            this.tbxLogin = new System.Windows.Forms.TextBox();
+            this.lblLogin = new System.Windows.Forms.Label();
+            this.tbxPassword = new System.Windows.Forms.TextBox();
+            this.lblPassword = new System.Windows.Forms.Label();
+            this.tbxPassword2 = new System.Windows.Forms.TextBox();
+            this.lblPassword2 = new System.Windows.Forms.Label();
             this.loggingIn = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
@@ -73,61 +73,62 @@
             this.singup.TabIndex = 0;
             this.singup.Text = "Зарегистрироваться";
             this.singup.UseVisualStyleBackColor = true;
+            this.singup.CheckedChanged += new System.EventHandler(this.singup_CheckedChanged);
             // 
-            // login
+            // tbxLogin
             // 
-            this.login.Location = new System.Drawing.Point(211, 153);
-            this.login.Name = "login";
-            this.login.Size = new System.Drawing.Size(256, 31);
-            this.login.TabIndex = 2;
+            this.tbxLogin.Location = new System.Drawing.Point(211, 153);
+            this.tbxLogin.Name = "tbxLogin";
+            this.tbxLogin.Size = new System.Drawing.Size(256, 31);
+            this.tbxLogin.TabIndex = 2;
             // 
-            // label1
+            // lblLogin
             // 
-            this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.label1.Location = new System.Drawing.Point(12, 150);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(81, 32);
-            this.label1.TabIndex = 3;
-            this.label1.Text = "Логин";
+            this.lblLogin.AutoSize = true;
+            this.lblLogin.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.lblLogin.Location = new System.Drawing.Point(12, 150);
+            this.lblLogin.Name = "lblLogin";
+            this.lblLogin.Size = new System.Drawing.Size(160, 32);
+            this.lblLogin.TabIndex = 3;
+            this.lblLogin.Text = "Логин (email)";
             // 
-            // password
+            // tbxPassword
             // 
-            this.password.Location = new System.Drawing.Point(211, 203);
-            this.password.Name = "password";
-            this.password.Size = new System.Drawing.Size(256, 31);
-            this.password.TabIndex = 2;
-            this.password.UseSystemPasswordChar = true;
+            this.tbxPassword.Location = new System.Drawing.Point(211, 203);
+            this.tbxPassword.Name = "tbxPassword";
+            this.tbxPassword.Size = new System.Drawing.Size(256, 31);
+            this.tbxPassword.TabIndex = 2;
+            this.tbxPassword.UseSystemPasswordChar = true;
             // 
-            // label2
+            // lblPassword
             // 
-            this.label2.AutoSize = true;
-            this.label2.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.label2.Location = new System.Drawing.Point(12, 200);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(96, 32);
-            this.label2.TabIndex = 3;
-            this.label2.Text = "Пароль";
+            this.lblPassword.AutoSize = true;
+            this.lblPassword.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.lblPassword.Location = new System.Drawing.Point(12, 200);
+            this.lblPassword.Name = "lblPassword";
+            this.lblPassword.Size = new System.Drawing.Size(96, 32);
+            this.lblPassword.TabIndex = 3;
+            this.lblPassword.Text = "Пароль";
             // 
-            // textBox1
+            // tbxPassword2
             // 
-            this.textBox1.Location = new System.Drawing.Point(211, 253);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(256, 31);
-            this.textBox1.TabIndex = 2;
-            this.textBox1.UseSystemPasswordChar = true;
-            this.textBox1.Visible = false;
+            this.tbxPassword2.Location = new System.Drawing.Point(211, 253);
+            this.tbxPassword2.Name = "tbxPassword2";
+            this.tbxPassword2.Size = new System.Drawing.Size(256, 31);
+            this.tbxPassword2.TabIndex = 2;
+            this.tbxPassword2.UseSystemPasswordChar = true;
+            this.tbxPassword2.Visible = false;
             // 
-            // label3
+            // lblPassword2
             // 
-            this.label3.AutoSize = true;
-            this.label3.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.label3.Location = new System.Drawing.Point(12, 250);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(193, 32);
-            this.label3.TabIndex = 3;
-            this.label3.Text = "Пароль еще раз";
-            this.label3.Visible = false;
+            this.lblPassword2.AutoSize = true;
+            this.lblPassword2.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.lblPassword2.Location = new System.Drawing.Point(12, 250);
+            this.lblPassword2.Name = "lblPassword2";
+            this.lblPassword2.Size = new System.Drawing.Size(193, 32);
+            this.lblPassword2.TabIndex = 3;
+            this.lblPassword2.Text = "Пароль еще раз";
+            this.lblPassword2.Visible = false;
             // 
             // loggingIn
             // 
@@ -146,12 +147,12 @@
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.ClientSize = new System.Drawing.Size(478, 344);
             this.Controls.Add(this.loggingIn);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.textBox1);
-            this.Controls.Add(this.password);
-            this.Controls.Add(this.login);
+            this.Controls.Add(this.lblPassword2);
+            this.Controls.Add(this.lblPassword);
+            this.Controls.Add(this.lblLogin);
+            this.Controls.Add(this.tbxPassword2);
+            this.Controls.Add(this.tbxPassword);
+            this.Controls.Add(this.tbxLogin);
             this.Controls.Add(this.groupBox1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
@@ -175,12 +176,12 @@
         private System.Windows.Forms.RadioButton singin;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.RadioButton singup;
-        private System.Windows.Forms.TextBox login;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.TextBox password;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.TextBox textBox1;
-        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.TextBox tbxLogin;
+        private System.Windows.Forms.Label lblLogin;
+        private System.Windows.Forms.TextBox tbxPassword;
+        private System.Windows.Forms.Label lblPassword;
+        private System.Windows.Forms.TextBox tbxPassword2;
+        private System.Windows.Forms.Label lblPassword2;
         private System.Windows.Forms.Button loggingIn;
     }
 }

@@ -32,5 +32,20 @@ namespace praktika3
         {
             
         }
+
+        private void singup_CheckedChanged(object sender, EventArgs e)
+        {
+            if (lblPassword2.Visible == false && tbxPassword2.Visible == false)
+            {
+                lblPassword2.Visible = true;
+                tbxPassword2.Visible = true;
+            }
+            
+            else
+            {
+                lblPassword2.Visible = false;
+                tbxPassword2.Visible = false;
+            }
+        }
     }
 }
