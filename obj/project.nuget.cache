@@ -1,8 +1,13 @@
 {
   "version": 2,
-  "dgSpecHash": "fyXD4zz3y+bCfCtq4J+D4NFcCbW6n1To3dBLsW+DO+Jx6kbRBIS+EspDpMcIm8x+AVRpjU/0aSeGOZZcMsySbA==",
+  "dgSpecHash": "IcwiwyfhC8pamI7VtEzs1srUrSASiRzosQqujFSt4e7gZvYEus13xNXDWTNsSPxgc1oyKPKzwNZvrngDBOMJeA==",
   "success": true,
-  "projectFilePath": "C:\\Users\\voenk\\source\\repos\\praktika3\\praktika3.csproj",
-  "expectedPackageFiles": [],
+  "projectFilePath": "C:\\Users\\voenk\\Documents\\GitHub\\practica2021\\praktika3.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\voenk\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\5.0.12\\microsoft.netcore.app.host.win-x64.5.0.12.nupkg.sha512",
+    "C:\\Users\\voenk\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\5.0.0\\microsoft.aspnetcore.app.ref.5.0.0.nupkg.sha512",
+    "C:\\Users\\voenk\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\5.0.0\\microsoft.windowsdesktop.app.ref.5.0.0.nupkg.sha512",
+    "C:\\Users\\voenk\\.nuget\\packages\\microsoft.netcore.app.ref\\5.0.0\\microsoft.netcore.app.ref.5.0.0.nupkg.sha512"
+  ],
   "logs": []
 }
