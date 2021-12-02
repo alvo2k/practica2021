@@ -379,6 +379,7 @@ namespace praktika3
             this.Name = "Appointment";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "  Запись на прием";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Appointment_FormClosing);
             this.Load += new System.EventHandler(this.Appointment_Load);
             this.backGroundColor.ResumeLayout(false);
             this.backGroundColor.PerformLayout();

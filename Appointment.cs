@@ -27,13 +27,16 @@ namespace praktika3
         5. Добавить "обо мне"
 
         */
-        public Appointment()
+        Authorization _authorization;
+        public Appointment(Authorization authorization)
         {
-            InitializeComponent();
+            InitializeComponent();            
+            _authorization = authorization;
         }
 
         private void Appointment_Load(object sender, EventArgs e)
         {
+            
             dateTimePicker.Value = DateTime.Now;
             dateTimePicker.MinDate = DateTime.Now;
             dateTimePicker.MaxDate = dateTimePicker.Value.AddDays(45);
@@ -366,6 +369,11 @@ namespace praktika3
         private void textBox7_KeyPress(object sender, KeyPressEventArgs e)
         {
             SaveUnsent(tbxEmail);
+        }
+
+        private void Appointment_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            _authorization.Close();
         }
     }
 }
