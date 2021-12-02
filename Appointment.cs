@@ -251,6 +251,9 @@ namespace praktika3
 
         private void LoadUnsent() // чтение unsent.txt и запись значений в textbox`ы 
         {
+            if (!File.Exists("unsent.txt"))
+                File.Create("unsent.txt").Close();
+
             string[] lines = File.ReadAllLines("unsent.txt");
             tbxName.Text = lines[0];
             tbxSurName.Text = lines[1];
