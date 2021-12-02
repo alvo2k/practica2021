@@ -48,3 +48,4 @@ C:\Users\voenk\Documents\GitHub\practica2021\bin\Debug\net5.0-windows\K4os.Compr
 C:\Users\voenk\Documents\GitHub\practica2021\bin\Debug\net5.0-windows\K4os.Hash.xxHash.dll
 C:\Users\voenk\Documents\GitHub\practica2021\bin\Debug\net5.0-windows\MySql.Data.xml
 C:\Users\voenk\Documents\GitHub\practica2021\obj\Debug\net5.0-windows\praktika3.csproj.CopyComplete
+C:\Users\voenk\Documents\GitHub\practica2021\obj\Debug\net5.0-windows\praktika3.Authorization.resources
