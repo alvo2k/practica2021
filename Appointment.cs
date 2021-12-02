@@ -32,7 +32,7 @@ namespace praktika3
             InitializeComponent();
         }
 
-        private void Form1_Load(object sender, EventArgs e)
+        private void Appointment_Load(object sender, EventArgs e)
         {
             dateTimePicker.Value = DateTime.Now;
             dateTimePicker.MinDate = DateTime.Now;
@@ -50,7 +50,7 @@ namespace praktika3
                 MessageBox.Show("На это время запись невозможна!", "Попробуйте выбрать другое время");
             }
 
-            if (textBox1.Text != String.Empty && textBox2.Text != String.Empty && textBox6.Text != String.Empty && TimeCheck() && EmailLegit(textBox7.Text))
+            if (tbxName.Text != String.Empty && tbxSurName.Text != String.Empty && tbxTheame.Text != String.Empty && TimeCheck() && EmailLegit(tbxEmail.Text))
             {
                 SmtpClient Smtp = new SmtpClient("smtp.yandex.ru", 25);
                 Smtp.Credentials = new NetworkCredential("voenkov-alex@yandex.ru", "yatfbpdghuvatpae");
@@ -60,21 +60,21 @@ namespace praktika3
                 Message.From = new MailAddress("voenkov-alex@yandex.ru");
                 Message.To.Add(new MailAddress("voenkova@mgok.pro"));
                 Message.Subject = "Запись к директору";
-                string body = $"Новая запись!\n\n\nИмя: {textBox1.Text}\nФамилия: {textBox2.Text}\nОтчество: {textBox3.Text}\nГруппа: {textBox4.Text}\nДолжность: {textBox5.Text}\nТема: {textBox6.Text}\nE-mail: {textBox7.Text}\nВремя: {dateTimePicker.Value}";
+                string body = $"Новая запись!\n\n\nИмя: {tbxName.Text}\nФамилия: {tbxSurName.Text}\nОтчество: {tbxDadName.Text}\nГруппа: {tbxGroup.Text}\nДолжность: {tbxPosition.Text}\nТема: {tbxTheame.Text}\nE-mail: {tbxEmail.Text}\nВремя: {dateTimePicker.Value}";
                 Message.Body = body;
                 
                 try
                 {
                     Smtp.Send(Message);
-                    MessageBox.Show("Вы были успешно записаны!" + Environment.NewLine + textBox1.Text + " " + textBox2.Text + " " + dateTimePicker.Value, "Запись");
-                    recordsBox.Items.Add(textBox6.Text + " " + dateTimePicker.Value);
+                    MessageBox.Show("Вы были успешно записаны!" + Environment.NewLine + tbxName.Text + " " + tbxSurName.Text + " " + dateTimePicker.Value, "Запись");
+                    recordsBox.Items.Add(tbxTheame.Text + " " + dateTimePicker.Value);
 
                     string fileName = "savedData.txt";
                     FileStream fstream = new FileStream(fileName, FileMode.Append);
 
                     StreamWriter sw = new StreamWriter(fstream);
                     fstream.Seek(0, SeekOrigin.End);
-                    sw.WriteLine($"{textBox1.Text}\n{textBox2.Text}\n{textBox3.Text}\n{textBox4.Text}\n{textBox5.Text}\n{textBox6.Text}\n{textBox7.Text}\n{dateTimePicker.Value}");
+                    sw.WriteLine($"{tbxName.Text}\n{tbxSurName.Text}\n{tbxDadName.Text}\n{tbxGroup.Text}\n{tbxPosition.Text}\n{tbxTheame.Text}\n{tbxEmail.Text}\n{dateTimePicker.Value}");
                     sw.Close();
                 }
                 catch (SmtpException ex)
@@ -85,12 +85,12 @@ namespace praktika3
 
             
 
-            if (!EmailLegit(textBox7.Text))
+            if (!EmailLegit(tbxEmail.Text))
             {
                 MessageBox.Show("Вы ввели неправильный email!", "Проверьте введенный email");
             }
 
-            if (textBox1.Text == String.Empty || textBox2.Text == String.Empty || textBox6.Text == String.Empty)
+            if (tbxName.Text == String.Empty || tbxSurName.Text == String.Empty || tbxTheame.Text == String.Empty)
             {
                 MessageBox.Show("Введите все обязательные поля помеченые \"*\"", "Не все обязательные поля были заполнены!");
             }
@@ -152,7 +152,7 @@ namespace praktika3
                 bool flag = false;
                 while (i < InputFile.Length)
                 {
-                    if (InputFile[i].Equals(textBox1.Text) && InputFile[i+1].Equals(textBox2.Text) && InputFile[i+5].Equals(textBox6.Text) && !flag)
+                    if (InputFile[i].Equals(tbxName.Text) && InputFile[i+1].Equals(tbxSurName.Text) && InputFile[i+5].Equals(tbxTheame.Text) && !flag)
                     {
                         i += 8;
                         flag = true;
@@ -174,18 +174,18 @@ namespace praktika3
             
         }
 
-        private void Cancel_Click(object sender, EventArgs e)
+        private void clearForm_Click(object sender, EventArgs e)
         {
-            textBox1.Text = String.Empty;
-            textBox2.Text = String.Empty;
-            textBox3.Text = String.Empty;
-            textBox4.Text = String.Empty;
-            textBox5.Text = String.Empty;
-            textBox6.Text = String.Empty;
-            textBox7.Text = String.Empty;
+            tbxName.Text = String.Empty;
+            tbxSurName.Text = String.Empty;
+            tbxDadName.Text = String.Empty;
+            tbxGroup.Text = String.Empty;
+            tbxPosition.Text = String.Empty;
+            tbxTheame.Text = String.Empty;
+            tbxEmail.Text = String.Empty;
         }
 
-        private void time_Click(object sender, EventArgs e)
+        private void workingHours_Click(object sender, EventArgs e)
         {
             WorkingHours newForm = new WorkingHours(this.Left, this.Top, this.Height, this.Width);
             newForm.Show();
@@ -201,7 +201,7 @@ namespace praktika3
                     cancelRecord.Enabled = true;
                     cancelRecord.Visible = true;
                     Submit.Enabled = false;
-                    Cancel.Enabled = false;
+                    clearForm.Enabled = false;
                     dateTimePicker.Enabled = false;
                     LoadSentRecord(recordsBox.SelectedIndex);
                 }
@@ -211,15 +211,15 @@ namespace praktika3
                     cancelRecord.Enabled = false;
                     cancelRecord.Visible = false;
                     Submit.Enabled = true;
-                    Cancel.Enabled = true;
+                    clearForm.Enabled = true;
                     dateTimePicker.Enabled = true;
-                    textBox1.ReadOnly = false;
-                    textBox2.ReadOnly = false;
-                    textBox3.ReadOnly = false;
-                    textBox4.ReadOnly = false;
-                    textBox5.ReadOnly = false;
-                    textBox6.ReadOnly = false;
-                    textBox7.ReadOnly = false;
+                    tbxName.ReadOnly = false;
+                    tbxSurName.ReadOnly = false;
+                    tbxDadName.ReadOnly = false;
+                    tbxGroup.ReadOnly = false;
+                    tbxPosition.ReadOnly = false;
+                    tbxTheame.ReadOnly = false;
+                    tbxEmail.ReadOnly = false;
                     LoadUnsent();
                 }
             }
@@ -228,20 +228,20 @@ namespace praktika3
         private void LoadSentRecord(int index) // чтение из saveddata.txt со строки index * 8 и запись в textbox`ы readonly
         {
             string[] lines = File.ReadAllLines("savedData.txt");
-            textBox1.Text = lines[(index - 1) * 8];
-            textBox1.ReadOnly = true;
-            textBox2.Text = lines[(index - 1) * 8 + 1];
-            textBox2.ReadOnly = true;
-            textBox3.Text = lines[(index - 1) * 8 + 2];
-            textBox3.ReadOnly = true;
-            textBox4.Text = lines[(index - 1) * 8 + 3];
-            textBox4.ReadOnly = true;
-            textBox5.Text = lines[(index - 1) * 8 + 4];
-            textBox5.ReadOnly = true;
-            textBox6.Text = lines[(index - 1) * 8 + 5];
-            textBox6.ReadOnly = true;
-            textBox7.Text = lines[(index - 1) * 8 + 6];
-            textBox7.ReadOnly = true;
+            tbxName.Text = lines[(index - 1) * 8];
+            tbxName.ReadOnly = true;
+            tbxSurName.Text = lines[(index - 1) * 8 + 1];
+            tbxSurName.ReadOnly = true;
+            tbxDadName.Text = lines[(index - 1) * 8 + 2];
+            tbxDadName.ReadOnly = true;
+            tbxGroup.Text = lines[(index - 1) * 8 + 3];
+            tbxGroup.ReadOnly = true;
+            tbxPosition.Text = lines[(index - 1) * 8 + 4];
+            tbxPosition.ReadOnly = true;
+            tbxTheame.Text = lines[(index - 1) * 8 + 5];
+            tbxTheame.ReadOnly = true;
+            tbxEmail.Text = lines[(index - 1) * 8 + 6];
+            tbxEmail.ReadOnly = true;
             if (DateTime.Parse(lines[(index - 1) * 8 + 7]) > DateTime.Now)
                 dateTimePicker.Value = DateTime.Parse(lines[(index - 1) * 8 + 7]);
         }
@@ -249,13 +249,13 @@ namespace praktika3
         private void LoadUnsent() // чтение unsent.txt и запись значений в textbox`ы 
         {
             string[] lines = File.ReadAllLines("unsent.txt");
-            textBox1.Text = lines[0];
-            textBox2.Text = lines[1];
-            textBox3.Text = lines[2];
-            textBox4.Text = lines[3];
-            textBox5.Text = lines[4];
-            textBox6.Text = lines[5];
-            textBox7.Text = lines[6];
+            tbxName.Text = lines[0];
+            tbxSurName.Text = lines[1];
+            tbxDadName.Text = lines[2];
+            tbxGroup.Text = lines[3];
+            tbxPosition.Text = lines[4];
+            tbxTheame.Text = lines[5];
+            tbxEmail.Text = lines[6];
             if(DateTime.Parse(lines[7]) > DateTime.Now)
                 dateTimePicker.Value = DateTime.Parse(lines[7]);
         }
@@ -284,7 +284,7 @@ namespace praktika3
 
                 StreamWriter sw = new StreamWriter(fstream);
                 fstream.Seek(0, SeekOrigin.End);
-                sw.WriteLine($"{textBox1.Text}\n{textBox2.Text}\n{textBox3.Text}\n{textBox4.Text}\n{textBox5.Text}\n{textBox6.Text}\n{textBox7.Text}\n{dateTimePicker.Value}");
+                sw.WriteLine($"{tbxName.Text}\n{tbxSurName.Text}\n{tbxDadName.Text}\n{tbxGroup.Text}\n{tbxPosition.Text}\n{tbxTheame.Text}\n{tbxEmail.Text}\n{dateTimePicker.Value}");
                 sw.Close();
             }
         }
@@ -301,7 +301,7 @@ namespace praktika3
 
                 StreamWriter sw = new StreamWriter(fstream);
                 fstream.Seek(0, SeekOrigin.End);
-                sw.WriteLine($"{textBox1.Text}\n{textBox2.Text}\n{textBox3.Text}\n{textBox4.Text}\n{textBox5.Text}\n{textBox6.Text}\n{textBox7.Text}\n{dateTimePicker.Value}");
+                sw.WriteLine($"{tbxName.Text}\n{tbxSurName.Text}\n{tbxDadName.Text}\n{tbxGroup.Text}\n{tbxPosition.Text}\n{tbxTheame.Text}\n{tbxEmail.Text}\n{dateTimePicker.Value}");
                 sw.Close();
             }
         }
@@ -325,36 +325,36 @@ namespace praktika3
         private void textBox1_KeyPress(object sender, KeyPressEventArgs e)
         {
             OnlyLetters(e);
-            SaveUnsent(textBox1);
+            SaveUnsent(tbxName);
         }
 
         private void textBox2_KeyPress(object sender, KeyPressEventArgs e)
         {
             OnlyLetters(e);
-            SaveUnsent(textBox2);
+            SaveUnsent(tbxSurName);
         }
 
         private void textBox3_KeyPress(object sender, KeyPressEventArgs e)
         {
             OnlyLetters(e);
-            SaveUnsent(textBox3);
+            SaveUnsent(tbxDadName);
         }
 
         private void textBox5_KeyPress(object sender, KeyPressEventArgs e)
         {
             OnlyLetters(e);
-            SaveUnsent(textBox5);
+            SaveUnsent(tbxPosition);
         }
 
         private void textBox6_KeyPress(object sender, KeyPressEventArgs e)
         {
             OnlyLetters(e);
-            SaveUnsent(textBox6);
+            SaveUnsent(tbxTheame);
         }
 
         private void textBox4_KeyPress(object sender, KeyPressEventArgs e)
         {
-            SaveUnsent(textBox4);
+            SaveUnsent(tbxGroup);
         }
 
         private void dateTimePicker_ValueChanged(object sender, EventArgs e)
@@ -365,7 +365,7 @@ namespace praktika3
 
         private void textBox7_KeyPress(object sender, KeyPressEventArgs e)
         {
-            SaveUnsent(textBox7);
+            SaveUnsent(tbxEmail);
         }
     }
 }
