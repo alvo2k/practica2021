@@ -13,11 +13,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\voenk\\source\\repos\\praktika3\\praktika3.csproj",
+      "projectUniqueName": "C:\\Users\\voenk\\Documents\\GitHub\\practica2021\\praktika3.csproj",
       "projectName": "praktika",
-      "projectPath": "C:\\Users\\voenk\\source\\repos\\praktika3\\praktika3.csproj",
+      "projectPath": "C:\\Users\\voenk\\Documents\\GitHub\\practica2021\\praktika3.csproj",
       "packagesPath": "C:\\Users\\voenk\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\voenk\\source\\repos\\praktika3\\obj\\",
+      "outputPath": "C:\\Users\\voenk\\Documents\\GitHub\\practica2021\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\voenk\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -55,6 +55,24 @@
         ],
         "assetTargetFallback": true,
         "warn": true,
+        "downloadDependencies": [
+          {
+            "name": "Microsoft.AspNetCore.App.Ref",
+            "version": "[5.0.0, 5.0.0]"
+          },
+          {
+            "name": "Microsoft.NETCore.App.Host.win-x64",
+            "version": "[5.0.12, 5.0.12]"
+          },
+          {
+            "name": "Microsoft.NETCore.App.Ref",
+            "version": "[5.0.0, 5.0.0]"
+          },
+          {
+            "name": "Microsoft.WindowsDesktop.App.Ref",
+            "version": "[5.0.0, 5.0.0]"
+          }
+        ],
         "frameworkReferences": {
           "Microsoft.NETCore.App": {
             "privateAssets": "all"
@@ -63,7 +81,7 @@
             "privateAssets": "none"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.201\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.100\\RuntimeIdentifierGraph.json"
       }
     }
   }
