@@ -255,6 +255,7 @@ namespace praktika3
             {
                 File.Create("unsent.txt").Close();
                 return;
+
             }
 
             string[] lines = File.ReadAllLines("unsent.txt");
