@@ -252,7 +252,10 @@ namespace praktika3
         private void LoadUnsent() // чтение unsent.txt и запись значений в textbox`ы 
         {
             if (!File.Exists("unsent.txt"))
+            {
                 File.Create("unsent.txt").Close();
+                return;
+            }
 
             string[] lines = File.ReadAllLines("unsent.txt");
             tbxName.Text = lines[0];
@@ -269,7 +272,10 @@ namespace praktika3
         private void LoadListBox() // стартовая загрузка данных с savedata.txt в поля recordbox
         {
             if (!File.Exists("savedData.txt"))
+            {
                 File.Create("savedData.txt").Close();
+                return;
+            }
 
             string[] lines = File.ReadAllLines("savedData.txt");
 
