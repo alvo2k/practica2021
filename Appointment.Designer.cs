@@ -68,7 +68,6 @@ namespace praktika3
             this.dateTimePicker.Size = new System.Drawing.Size(213, 31);
             this.dateTimePicker.TabIndex = 57;
             this.dateTimePicker.Value = new System.DateTime(2021, 6, 22, 13, 37, 57, 0);
-            this.dateTimePicker.ValueChanged += new System.EventHandler(this.dateTimePicker_ValueChanged);
             // 
             // tbxEmail
             // 

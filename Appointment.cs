@@ -20,23 +20,28 @@ namespace praktika3
          
         --- TODO----
         
-        1. Ссылка на сайт мгока
+        1. TimePicker
         2. Востановление формы из recordsBox readonly
-        3. Добавить время работы
+        3.
         4. Проверка валидности времени
-        5. Добавить "обо мне"
+        5.
 
         */
-        Authorization _authorization;
-        public Appointment(Authorization authorization)
+        Authorization _parentForm;
+        public Appointment(Authorization parent)
         {
-            InitializeComponent();            
-            _authorization = authorization;
+            InitializeComponent();      
+            // для закрытия процесса родительской формы в formclosing
+            _parentForm = parent;
         }
 
+        #region Methods
+
+
+
+        #endregion Methods
         private void Appointment_Load(object sender, EventArgs e)
-        {
-            
+        {            
             dateTimePicker.Value = DateTime.Now;
             dateTimePicker.MinDate = DateTime.Now;
             dateTimePicker.MaxDate = dateTimePicker.Value.AddDays(45);
@@ -258,16 +263,20 @@ namespace praktika3
 
             }
 
-            string[] lines = File.ReadAllLines("unsent.txt");
-            tbxName.Text = lines[0];
-            tbxSurName.Text = lines[1];
-            tbxDadName.Text = lines[2];
-            tbxGroup.Text = lines[3];
-            tbxPosition.Text = lines[4];
-            tbxTheame.Text = lines[5];
-            tbxEmail.Text = lines[6];
-            if(DateTime.Parse(lines[7]) > DateTime.Now)
-                dateTimePicker.Value = DateTime.Parse(lines[7]);
+            try
+            {
+                string[] lines = File.ReadAllLines("unsent.txt");
+                tbxName.Text = lines[0];
+                tbxSurName.Text = lines[1];
+                tbxDadName.Text = lines[2];
+                tbxGroup.Text = lines[3];
+                tbxPosition.Text = lines[4];
+                tbxTheame.Text = lines[5];
+                tbxEmail.Text = lines[6];
+                if (DateTime.Parse(lines[7]) > DateTime.Now)
+                    dateTimePicker.Value = DateTime.Parse(lines[7]);
+            }
+            catch(Exception _) { }            
         }
 
         private void LoadListBox() // стартовая загрузка данных с savedata.txt в поля recordbox
@@ -370,12 +379,6 @@ namespace praktika3
             SaveUnsent(tbxGroup);
         }
 
-        private void dateTimePicker_ValueChanged(object sender, EventArgs e)
-        {
-            //if(e.ToString() != DateTime.Now.ToString())
-                //SaveUnsent(dateTimePicker);
-        }
-
         private void textBox7_KeyPress(object sender, KeyPressEventArgs e)
         {
             SaveUnsent(tbxEmail);
@@ -383,7 +386,7 @@ namespace praktika3
 
         private void Appointment_FormClosing(object sender, FormClosingEventArgs e)
         {
-            _authorization.Close();
+            _parentForm.Close();
         }
     }
 }
