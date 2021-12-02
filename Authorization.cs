@@ -4,12 +4,23 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Net.Mail;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace praktika3
 {
+        /* 
+         * 
+        --- TODO----
+        
+        1. Проверка на русские буквы в мыле
+        2. 
+
+        */
+
     public partial class Authorization : Form
     {
         public Authorization()
@@ -17,35 +28,117 @@ namespace praktika3
             InitializeComponent();
         }
 
-        private void loggingIn_Click(object sender, EventArgs e)
+        #region Methods
+
+        private void ProceedAppointment()
         {
             this.SetVisibleCore(false);
-            Appointment appointment = new Appointment(this);            
+            Appointment appointment = new Appointment(this);
             appointment.Show();
         }
 
-        private void Authorization_FormClosed(object sender, FormClosedEventArgs e)
-        {
-        }
+        #endregion Methods
 
-        private void Authorization_FormClosing(object sender, FormClosingEventArgs e)
+        #region Events
+        private void loggingIn_Click(object sender, EventArgs e)
         {
-            
+            // case 1: singin
+            if (singin.Checked)
+            {
+                ProceedAppointment();
+            }
+            // case 2: singup
+            if (singup.Checked)
+            {
+                if (EmailCheck() && PasswordCheck()) ProceedAppointment();
+            }
         }
 
         private void singup_CheckedChanged(object sender, EventArgs e)
         {
-            if (lblPassword2.Visible == false && tbxPassword2.Visible == false)
+            if (lblPassword2.Visible == false && tbxPassword2.Visible == false && instructions.Visible == false)
             {
                 lblPassword2.Visible = true;
                 tbxPassword2.Visible = true;
+                instructions.Visible = true;
+                loggingIn.Top = Math.Min(loggingIn.Top + 60, 303);
+                this.Height = this.Height + 50;
             }
             
             else
             {
                 lblPassword2.Visible = false;
                 tbxPassword2.Visible = false;
+                instructions.Visible = false;
+                loggingIn.Top = loggingIn.Top - 50;
+                this.Height = this.Height - 50;
             }
         }
+
+        private void Authorization_Load(object sender, EventArgs e)
+        {
+            loggingIn.Top = loggingIn.Top - 50;
+
+            this.Height = this.Height - 50;
+        }
+
+        #endregion Events
+
+        #region Checks
+
+        private bool EmailCheck()
+        {
+            if (tbxLogin.Text.EndsWith("@mgok.pro"))
+            {
+                try
+                {
+                    MailAddress ma = new MailAddress(tbxLogin.Text);
+                    return true;
+                }
+                catch
+                {
+                    MessageBox.Show("Invalid email");
+                    return false;
+                }
+            }
+            else            
+                MessageBox.Show("Введите почту МГОК'а!", "Неправильный email");
+
+            return false;
+        }
+
+        private bool PasswordCheck()
+        {
+            if (tbxPassword.Text.Length == 0 || tbxPassword2.Text.Length == 0)
+            {
+                MessageBox.Show("Поля пароля пустые!");
+                return false;
+            }
+            if (tbxPassword.Text != tbxPassword2.Text)
+            {
+                MessageBox.Show("Поля пароля не совпадают!");
+                return false;
+            }
+
+            if(tbxPassword.Text.Length < 8)
+            {
+                MessageBox.Show("Пароль должен быть от 8 до 16 символов");
+                return false;
+            }
+            foreach (var e in tbxPassword.Text)
+            {
+                if (!Regex.Match(e.ToString(), @"[0-9]|[a-zA-Z]").Success)
+                {
+                    MessageBox.Show("Поле пароля имеет запрещенные символы", "Придумайте другой пароль");
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        #endregion Checks
+
+
     }
 }

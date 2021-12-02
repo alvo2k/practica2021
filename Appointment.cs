@@ -22,7 +22,7 @@ namespace praktika3
         
         1. TimePicker
         2. Востановление формы из recordsBox readonly
-        3.
+        3. 
         4. Проверка валидности времени
         5.
 
