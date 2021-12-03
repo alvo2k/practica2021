@@ -39,6 +39,7 @@
             this.tbxPassword2 = new System.Windows.Forms.TextBox();
             this.lblPassword2 = new System.Windows.Forms.Label();
             this.loggingIn = new System.Windows.Forms.Button();
+            this.instructions = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -58,9 +59,10 @@
             // 
             this.groupBox1.Controls.Add(this.singup);
             this.groupBox1.Controls.Add(this.singin);
-            this.groupBox1.Location = new System.Drawing.Point(12, 12);
+            this.groupBox1.Dock = System.Windows.Forms.DockStyle.Top;
+            this.groupBox1.Location = new System.Drawing.Point(0, 0);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(455, 117);
+            this.groupBox1.Size = new System.Drawing.Size(631, 117);
             this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
             // 
@@ -77,9 +79,10 @@
             // 
             // tbxLogin
             // 
-            this.tbxLogin.Location = new System.Drawing.Point(211, 153);
+            this.tbxLogin.Location = new System.Drawing.Point(232, 150);
+            this.tbxLogin.MaxLength = 64;
             this.tbxLogin.Name = "tbxLogin";
-            this.tbxLogin.Size = new System.Drawing.Size(256, 31);
+            this.tbxLogin.Size = new System.Drawing.Size(387, 31);
             this.tbxLogin.TabIndex = 2;
             // 
             // lblLogin
@@ -94,9 +97,10 @@
             // 
             // tbxPassword
             // 
-            this.tbxPassword.Location = new System.Drawing.Point(211, 203);
+            this.tbxPassword.Location = new System.Drawing.Point(232, 200);
+            this.tbxPassword.MaxLength = 16;
             this.tbxPassword.Name = "tbxPassword";
-            this.tbxPassword.Size = new System.Drawing.Size(256, 31);
+            this.tbxPassword.Size = new System.Drawing.Size(387, 31);
             this.tbxPassword.TabIndex = 2;
             this.tbxPassword.UseSystemPasswordChar = true;
             // 
@@ -112,9 +116,10 @@
             // 
             // tbxPassword2
             // 
-            this.tbxPassword2.Location = new System.Drawing.Point(211, 253);
+            this.tbxPassword2.Location = new System.Drawing.Point(232, 250);
+            this.tbxPassword2.MaxLength = 16;
             this.tbxPassword2.Name = "tbxPassword2";
-            this.tbxPassword2.Size = new System.Drawing.Size(256, 31);
+            this.tbxPassword2.Size = new System.Drawing.Size(387, 31);
             this.tbxPassword2.TabIndex = 2;
             this.tbxPassword2.UseSystemPasswordChar = true;
             this.tbxPassword2.Visible = false;
@@ -132,7 +137,7 @@
             // 
             // loggingIn
             // 
-            this.loggingIn.Location = new System.Drawing.Point(329, 290);
+            this.loggingIn.Location = new System.Drawing.Point(481, 303);
             this.loggingIn.Name = "loggingIn";
             this.loggingIn.Size = new System.Drawing.Size(138, 34);
             this.loggingIn.TabIndex = 4;
@@ -140,12 +145,23 @@
             this.loggingIn.UseVisualStyleBackColor = true;
             this.loggingIn.Click += new System.EventHandler(this.loggingIn_Click);
             // 
+            // instructions
+            // 
+            this.instructions.Location = new System.Drawing.Point(14, 290);
+            this.instructions.Name = "instructions";
+            this.instructions.Size = new System.Drawing.Size(457, 72);
+            this.instructions.TabIndex = 5;
+            this.instructions.Text = "Для логина используйте почту МГОК\'а\r\nПароль должен состоять из латинских букв и ц" +
+    "ифр.\r\nОт 8 до 16 символов";
+            this.instructions.Visible = false;
+            // 
             // Authorization
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.ClientSize = new System.Drawing.Size(478, 344);
+            this.ClientSize = new System.Drawing.Size(631, 371);
+            this.Controls.Add(this.instructions);
             this.Controls.Add(this.loggingIn);
             this.Controls.Add(this.lblPassword2);
             this.Controls.Add(this.lblPassword);
@@ -156,14 +172,11 @@
             this.Controls.Add(this.groupBox1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
-            this.MaximumSize = new System.Drawing.Size(500, 400);
             this.MinimizeBox = false;
-            this.MinimumSize = new System.Drawing.Size(500, 400);
             this.Name = "Authorization";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Authorization";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Authorization_FormClosing);
-            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Authorization_FormClosed);
+            this.Load += new System.EventHandler(this.Authorization_Load);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
@@ -183,5 +196,6 @@
         private System.Windows.Forms.TextBox tbxPassword2;
         private System.Windows.Forms.Label lblPassword2;
         private System.Windows.Forms.Button loggingIn;
+        private System.Windows.Forms.Label instructions;
     }
 }
