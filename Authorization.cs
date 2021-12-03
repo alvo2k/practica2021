@@ -13,12 +13,14 @@ namespace praktika3
         --- TODO----
         
         1. Проверка на русские буквы в мыле
-        2. 
+        2. Забыли пароль?
 
         */
 
     public partial class Authorization : Form
     {
+        // строка подключения и само подключение в методе DBConnect
+        SqlConnection connection = new SqlConnection();
         public Authorization()
         {
             InitializeComponent();
@@ -42,8 +44,8 @@ namespace praktika3
                 return;
             }
             var connectionString = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\\Database.mdf;Integrated Security=True";
-            SqlConnection connection = new SqlConnection(connectionString);
-
+            
+            connection.ConnectionString = connectionString;
             if (connection.State != ConnectionState.Open)
             {
                 connection.Open();
@@ -59,12 +61,50 @@ namespace praktika3
             // case 1: singin
             if (singin.Checked)
             {
-                ProceedAppointment();
+                if (connection.State == ConnectionState.Open)
+                {
+                    // создается новая таблица
+                    var users = new DataTable();
+
+                    // команда поиска записи по логину
+                    var command = $"SELECT * FROM users WHERE login='{tbxLogin.Text}'"; 
+
+                    // выполнение команды и запись в таблицу
+                    var adapter = new SqlDataAdapter(command, connection).Fill(users);
+                    
+                    if (users.Rows.Count == 0)
+                    {
+                        MessageBox.Show("Пользователь не найден!", "Пройдите регистрацию");
+                        singup.PerformClick();
+                        return;
+                    }
+
+                    if (users.Rows[0][1].ToString() == tbxLogin.Text && users.Rows[0][2].ToString() == tbxPassword.Text)
+                    {
+                        MessageBox.Show("Успешный вход", $"Добро пожаловать, {tbxLogin.Text}!");
+                        ProceedAppointment();
+                    }
+                    else
+                        MessageBox.Show("Неправильный логин или пароль!", "Попробуйте еще раз");
+                }
+                else
+                {
+                    MessageBox.Show("Нет подключения к БД, попробуйте снова");
+                    DBConnect();
+                }                
             }
             // case 2: singup
             if (singup.Checked)
             {
-                if (EmailCheck() && PasswordCheck()) ProceedAppointment();
+                if (EmailCheck() && PasswordCheck() && connection.State == ConnectionState.Open)
+                {
+                    var command = $"INSERT INTO users (login, pass) VALUES ('{tbxLogin.Text}', '{tbxPassword.Text}')";
+
+                    var cmd = new SqlCommand(command, connection);
+                    cmd.ExecuteNonQuery();
+                    MessageBox.Show("Данные добавлены!");
+                    ProceedAppointment();
+                }
             }
         }
 
