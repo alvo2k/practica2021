@@ -1,14 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Linq;
 using System.Net.Mail;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using Microsoft.Data.SqlClient;
+using System.IO;
 
 namespace praktika3
 {
@@ -35,6 +31,24 @@ namespace praktika3
             this.SetVisibleCore(false);
             Appointment appointment = new Appointment(this);
             appointment.Show();
+        }
+
+        private void DBConnect()
+        {
+            if (!File.Exists("Database.mdf"))
+            {
+                MessageBox.Show("База данных не найдена!", "Приложение закрывается...");
+                this.Close();
+                return;
+            }
+            var connectionString = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\\Database.mdf;Integrated Security=True";
+            SqlConnection connection = new SqlConnection(connectionString);
+
+            if (connection.State != ConnectionState.Open)
+            {
+                connection.Open();
+                //MessageBox.Show("DB connected!");
+            }
         }
 
         #endregion Methods
@@ -80,6 +94,7 @@ namespace praktika3
             loggingIn.Top = loggingIn.Top - 50;
 
             this.Height = this.Height - 50;
+            DBConnect();
         }
 
         #endregion Events
