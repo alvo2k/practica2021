@@ -1,14 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Linq;
 using System.Net.Mail;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using Microsoft.Data.SqlClient;
+using System.IO;
 
 namespace praktika3
 {
@@ -17,12 +13,14 @@ namespace praktika3
         --- TODO----
         
         1. Проверка на русские буквы в мыле
-        2. 
+        2. Забыли пароль?
 
         */
 
     public partial class Authorization : Form
     {
+        // строка подключения и само подключение в методе DBConnect
+        SqlConnection connection = new SqlConnection();
         public Authorization()
         {
             InitializeComponent();
@@ -37,6 +35,24 @@ namespace praktika3
             appointment.Show();
         }
 
+        private void DBConnect()
+        {
+            if (!File.Exists("Database.mdf"))
+            {
+                MessageBox.Show("База данных не найдена!", "Приложение закрывается...");
+                this.Close();
+                return;
+            }
+            var connectionString = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\\Database.mdf;Integrated Security=True";
+            
+            connection.ConnectionString = connectionString;
+            if (connection.State != ConnectionState.Open)
+            {
+                connection.Open();
+                //MessageBox.Show("DB connected!");
+            }
+        }
+
         #endregion Methods
 
         #region Events
@@ -45,12 +61,50 @@ namespace praktika3
             // case 1: singin
             if (singin.Checked)
             {
-                ProceedAppointment();
+                if (connection.State == ConnectionState.Open)
+                {
+                    // создается новая таблица
+                    var users = new DataTable();
+
+                    // команда поиска записи по логину
+                    var command = $"SELECT * FROM users WHERE login='{tbxLogin.Text}'"; 
+
+                    // выполнение команды и запись в таблицу
+                    var adapter = new SqlDataAdapter(command, connection).Fill(users);
+                    
+                    if (users.Rows.Count == 0)
+                    {
+                        MessageBox.Show("Пользователь не найден!", "Пройдите регистрацию");
+                        singup.PerformClick();
+                        return;
+                    }
+
+                    if (users.Rows[0][1].ToString() == tbxLogin.Text && users.Rows[0][2].ToString() == tbxPassword.Text)
+                    {
+                        MessageBox.Show("Успешный вход", $"Добро пожаловать, {tbxLogin.Text}!");
+                        ProceedAppointment();
+                    }
+                    else
+                        MessageBox.Show("Неправильный логин или пароль!", "Попробуйте еще раз");
+                }
+                else
+                {
+                    MessageBox.Show("Нет подключения к БД, попробуйте снова");
+                    DBConnect();
+                }                
             }
             // case 2: singup
             if (singup.Checked)
             {
-                if (EmailCheck() && PasswordCheck()) ProceedAppointment();
+                if (EmailCheck() && PasswordCheck() && connection.State == ConnectionState.Open)
+                {
+                    var command = $"INSERT INTO users (login, pass) VALUES ('{tbxLogin.Text}', '{tbxPassword.Text}')";
+
+                    var cmd = new SqlCommand(command, connection);
+                    cmd.ExecuteNonQuery();
+                    MessageBox.Show("Данные добавлены!");
+                    ProceedAppointment();
+                }
             }
         }
 
@@ -80,6 +134,7 @@ namespace praktika3
             loggingIn.Top = loggingIn.Top - 50;
 
             this.Height = this.Height - 50;
+            DBConnect();
         }
 
         #endregion Events

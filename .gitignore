@@ -2,4 +2,4 @@
 .vs/
 bin/
 obj/
-Database_log.ldf
+!bin\Debug\net5.0-windows\Database.mdf
