@@ -61,6 +61,12 @@ namespace praktika3
             // case 1: singin
             if (singin.Checked)
             {
+                if (tbxLogin.Text == "" || tbxPassword.Text == "")
+                {
+                    MessageBox.Show("Введите логин и пароль!", "Введите все обязательные поля");
+                    return;
+                }
+
                 if (connection.State == ConnectionState.Open)
                 {
                     // создается новая таблица
