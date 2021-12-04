@@ -101,7 +101,7 @@
             this.tbxPassword.MaxLength = 16;
             this.tbxPassword.Name = "tbxPassword";
             this.tbxPassword.Size = new System.Drawing.Size(387, 31);
-            this.tbxPassword.TabIndex = 2;
+            this.tbxPassword.TabIndex = 3;
             this.tbxPassword.UseSystemPasswordChar = true;
             // 
             // lblPassword
@@ -120,7 +120,7 @@
             this.tbxPassword2.MaxLength = 16;
             this.tbxPassword2.Name = "tbxPassword2";
             this.tbxPassword2.Size = new System.Drawing.Size(387, 31);
-            this.tbxPassword2.TabIndex = 2;
+            this.tbxPassword2.TabIndex = 4;
             this.tbxPassword2.UseSystemPasswordChar = true;
             this.tbxPassword2.Visible = false;
             // 
@@ -140,7 +140,7 @@
             this.loggingIn.Location = new System.Drawing.Point(481, 303);
             this.loggingIn.Name = "loggingIn";
             this.loggingIn.Size = new System.Drawing.Size(138, 34);
-            this.loggingIn.TabIndex = 4;
+            this.loggingIn.TabIndex = 5;
             this.loggingIn.Text = "Продолжить";
             this.loggingIn.UseVisualStyleBackColor = true;
             this.loggingIn.Click += new System.EventHandler(this.loggingIn_Click);

@@ -14,6 +14,7 @@ namespace praktika3
         
         1. Проверка на русские буквы в мыле
         2. Забыли пароль?
+        3. Переход табами
 
         */
 
@@ -53,6 +54,46 @@ namespace praktika3
             }
         }
 
+        private void Register()
+        {
+            var command = $"INSERT INTO users (login, pass) VALUES ('{tbxLogin.Text}', '{tbxPassword.Text}')";
+
+            var cmd = new SqlCommand(command, connection);
+            if (cmd.ExecuteNonQuery() == 1)
+            {
+                MessageBox.Show("Данные добавлены!");
+                ProceedAppointment();
+            }
+            else MessageBox.Show("Ошибка при добавлении данных");
+        }
+
+        private void LogIn()
+        {
+            // создается новая таблица
+            var users = new DataTable();
+
+            // команда поиска записи по логину
+            var command = $"SELECT * FROM users WHERE login='{tbxLogin.Text}'";
+
+            // выполнение команды и запись в таблицу
+            var adapter = new SqlDataAdapter(command, connection).Fill(users);
+
+            if (users.Rows.Count == 0)
+            {
+                MessageBox.Show("Пользователь не найден!", "Пройдите регистрацию");
+                singup.PerformClick();
+                return;
+            }
+
+            if (users.Rows[0][1].ToString() == tbxLogin.Text && users.Rows[0][2].ToString() == tbxPassword.Text)
+            {
+                MessageBox.Show("Успешный вход", $"Добро пожаловать, {tbxLogin.Text}!");
+                ProceedAppointment();
+            }
+            else
+                MessageBox.Show("Неправильный логин или пароль!", "Попробуйте еще раз");
+        }
+
         #endregion Methods
 
         #region Events
@@ -65,9 +106,8 @@ namespace praktika3
                 {
                     MessageBox.Show("Введите логин и пароль!", "Введите все обязательные поля");
                     return;
-                }
-                
-                logIn();
+                }  
+                LogIn();
             }
             // case 2: singup
             if (singup.Checked && connection.State == ConnectionState.Open)
@@ -82,8 +122,7 @@ namespace praktika3
             {
                 MessageBox.Show("Нет подключения к БД, попробуйте снова");
                 DBConnect();
-            }
-            
+            }            
         }        
 
         private void singup_CheckedChanged(object sender, EventArgs e)
@@ -115,47 +154,7 @@ namespace praktika3
             DBConnect();
         }
 
-        #endregion Events
-
-        private void Register()
-        {
-            var command = $"INSERT INTO users (login, pass) VALUES ('{tbxLogin.Text}', '{tbxPassword.Text}')";
-
-            var cmd = new SqlCommand(command, connection);
-            if (cmd.ExecuteNonQuery() == 1)
-            {
-                MessageBox.Show("Данные добавлены!");
-                ProceedAppointment();
-            }
-            else MessageBox.Show("Ошибка при добавлении данных");
-        }
-
-        private void logIn()
-        {
-            // создается новая таблица
-            var users = new DataTable();
-
-            // команда поиска записи по логину
-            var command = $"SELECT * FROM users WHERE login='{tbxLogin.Text}'";
-
-            // выполнение команды и запись в таблицу
-            var adapter = new SqlDataAdapter(command, connection).Fill(users);
-
-            if (users.Rows.Count == 0)
-            {
-                MessageBox.Show("Пользователь не найден!", "Пройдите регистрацию");
-                singup.PerformClick();
-                return;
-            }
-
-            if (users.Rows[0][1].ToString() == tbxLogin.Text && users.Rows[0][2].ToString() == tbxPassword.Text)
-            {
-                MessageBox.Show("Успешный вход", $"Добро пожаловать, {tbxLogin.Text}!");
-                ProceedAppointment();
-            }
-            else
-                MessageBox.Show("Неправильный логин или пароль!", "Попробуйте еще раз");
-        }
+        #endregion Events        
 
         #region Checks
 
@@ -231,7 +230,5 @@ namespace praktika3
         }
 
         #endregion Checks
-
-
     }
 }
