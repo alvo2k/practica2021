@@ -2,4 +2,4 @@
 .vs/
 bin/
 obj/
-!bin\Debug\net5.0-windows\Database.mdf
+!bin/Debug/net5.0-windows/Database.mdf
