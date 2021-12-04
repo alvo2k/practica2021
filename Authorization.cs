@@ -14,6 +14,7 @@ namespace praktika3
         
         1. Проверка на русские буквы в мыле
         2. Забыли пароль?
+        3. Переход табами
 
         */
 
@@ -53,60 +54,76 @@ namespace praktika3
             }
         }
 
+        private void Register()
+        {
+            var command = $"INSERT INTO users (login, pass) VALUES ('{tbxLogin.Text}', '{tbxPassword.Text}')";
+
+            var cmd = new SqlCommand(command, connection);
+            if (cmd.ExecuteNonQuery() == 1)
+            {
+                MessageBox.Show("Данные добавлены!");
+                ProceedAppointment();
+            }
+            else MessageBox.Show("Ошибка при добавлении данных");
+        }
+
+        private void LogIn()
+        {
+            // создается новая таблица
+            var users = new DataTable();
+
+            // команда поиска записи по логину
+            var command = $"SELECT * FROM users WHERE login='{tbxLogin.Text}'";
+
+            // выполнение команды и запись в таблицу
+            var adapter = new SqlDataAdapter(command, connection).Fill(users);
+
+            if (users.Rows.Count == 0)
+            {
+                MessageBox.Show("Пользователь не найден!", "Пройдите регистрацию");
+                singup.PerformClick();
+                return;
+            }
+
+            if (users.Rows[0][1].ToString() == tbxLogin.Text && users.Rows[0][2].ToString() == tbxPassword.Text)
+            {
+                MessageBox.Show("Успешный вход", $"Добро пожаловать, {tbxLogin.Text}!");
+                ProceedAppointment();
+            }
+            else
+                MessageBox.Show("Неправильный логин или пароль!", "Попробуйте еще раз");
+        }
+
         #endregion Methods
 
         #region Events
         private void loggingIn_Click(object sender, EventArgs e)
         {
             // case 1: singin
-            if (singin.Checked)
+            if (singin.Checked && connection.State == ConnectionState.Open)
             {
-                if (connection.State == ConnectionState.Open)
+                if (tbxLogin.Text == "" || tbxPassword.Text == "")
                 {
-                    // создается новая таблица
-                    var users = new DataTable();
-
-                    // команда поиска записи по логину
-                    var command = $"SELECT * FROM users WHERE login='{tbxLogin.Text}'"; 
-
-                    // выполнение команды и запись в таблицу
-                    var adapter = new SqlDataAdapter(command, connection).Fill(users);
-                    
-                    if (users.Rows.Count == 0)
-                    {
-                        MessageBox.Show("Пользователь не найден!", "Пройдите регистрацию");
-                        singup.PerformClick();
-                        return;
-                    }
-
-                    if (users.Rows[0][1].ToString() == tbxLogin.Text && users.Rows[0][2].ToString() == tbxPassword.Text)
-                    {
-                        MessageBox.Show("Успешный вход", $"Добро пожаловать, {tbxLogin.Text}!");
-                        ProceedAppointment();
-                    }
-                    else
-                        MessageBox.Show("Неправильный логин или пароль!", "Попробуйте еще раз");
-                }
-                else
-                {
-                    MessageBox.Show("Нет подключения к БД, попробуйте снова");
-                    DBConnect();
-                }                
+                    MessageBox.Show("Введите логин и пароль!", "Введите все обязательные поля");
+                    return;
+                }  
+                LogIn();
             }
             // case 2: singup
-            if (singup.Checked)
+            if (singup.Checked && connection.State == ConnectionState.Open)
             {
-                if (EmailCheck() && PasswordCheck() && connection.State == ConnectionState.Open)
+                if (EmailCheck() && PasswordCheck() && isLoginUnique())
                 {
-                    var command = $"INSERT INTO users (login, pass) VALUES ('{tbxLogin.Text}', '{tbxPassword.Text}')";
-
-                    var cmd = new SqlCommand(command, connection);
-                    cmd.ExecuteNonQuery();
-                    MessageBox.Show("Данные добавлены!");
-                    ProceedAppointment();
+                    Register();
                 }
             }
-        }
+
+            if (connection.State != ConnectionState.Open)
+            {
+                MessageBox.Show("Нет подключения к БД, попробуйте снова");
+                DBConnect();
+            }            
+        }        
 
         private void singup_CheckedChanged(object sender, EventArgs e)
         {
@@ -137,7 +154,7 @@ namespace praktika3
             DBConnect();
         }
 
-        #endregion Events
+        #endregion Events        
 
         #region Checks
 
@@ -157,8 +174,7 @@ namespace praktika3
                 }
             }
             else            
-                MessageBox.Show("Введите почту МГОК'а!", "Неправильный email");
-
+                MessageBox.Show("Введите почту МГОК'а в поле логина!", "Неправильный email");
             return false;
         }
 
@@ -192,8 +208,27 @@ namespace praktika3
             return true;
         }
 
+        private bool isLoginUnique()
+        {
+            // создается новая таблица
+            var users = new DataTable();
+
+            // команда поиска записи по логину
+            var command = $"SELECT * FROM users WHERE login='{tbxLogin.Text}'";
+
+            // выполнение команды и запись в таблицу
+            var adapter = new SqlDataAdapter(command, connection).Fill(users);
+
+            if (users.Rows.Count != 0)
+            {
+                MessageBox.Show("Такой пользователь уже существует!", "Введите пароль");
+                singin.PerformClick();
+                return false;
+            }
+
+            return true;
+        }
+
         #endregion Checks
-
-
     }
 }
