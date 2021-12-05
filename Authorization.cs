@@ -29,10 +29,10 @@ namespace praktika3
 
         #region Methods
 
-        private void ProceedAppointment()
+        private void ProceedAppointment(int userID)
         {
             this.SetVisibleCore(false);
-            Appointment appointment = new Appointment(this);
+            Appointment appointment = new Appointment(this, connection, userID);
             appointment.Show();
         }
 
@@ -61,8 +61,11 @@ namespace praktika3
             var cmd = new SqlCommand(command, connection);
             if (cmd.ExecuteNonQuery() == 1)
             {
+                var users = new DataTable();
+                var getUserID = $"SELECT * FROM users WHERE login='{tbxLogin.Text}'";
+                new SqlDataAdapter(command, connection).Fill(users);
                 MessageBox.Show("Данные добавлены!");
-                ProceedAppointment();
+                ProceedAppointment(Convert.ToInt32(users.Rows[0][0]));
             }
             else MessageBox.Show("Ошибка при добавлении данных");
         }
@@ -76,7 +79,7 @@ namespace praktika3
             var command = $"SELECT * FROM users WHERE login='{tbxLogin.Text}'";
 
             // выполнение команды и запись в таблицу
-            var adapter = new SqlDataAdapter(command, connection).Fill(users);
+            new SqlDataAdapter(command, connection).Fill(users);
 
             if (users.Rows.Count == 0)
             {
@@ -88,7 +91,7 @@ namespace praktika3
             if (users.Rows[0][1].ToString() == tbxLogin.Text && users.Rows[0][2].ToString() == tbxPassword.Text)
             {
                 MessageBox.Show("Успешный вход", $"Добро пожаловать, {tbxLogin.Text}!");
-                ProceedAppointment();
+                ProceedAppointment(Convert.ToInt32(users.Rows[0][0]));
             }
             else
                 MessageBox.Show("Неправильный логин или пароль!", "Попробуйте еще раз");

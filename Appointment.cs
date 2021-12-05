@@ -1,16 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Net.Mail;
 using System.Net;
 using System.IO;
 using System.Text.RegularExpressions;
+using Microsoft.Data.SqlClient;
+using System.Data;
 
 namespace praktika3
 {
@@ -22,17 +17,23 @@ namespace praktika3
         
         1. TimePicker
         2. Востановление формы из recordsBox readonly
-        3. 
+        3. Открытие ссылки в браузере
         4. Проверка валидности времени
-        5.
+        5. Backspace в textbox'ax
 
         */
         Authorization _parentForm;
-        public Appointment(Authorization parent)
+        SqlConnection _connection;
+        int _userID;
+        DataTable unsent = new DataTable();
+        
+        public Appointment(Authorization parent, SqlConnection connection, int userID)
         {
             InitializeComponent();      
             // для закрытия процесса родительской формы в formclosing
             _parentForm = parent;
+            _connection = connection;
+            _userID = userID;            
         }
 
         #region Methods        
@@ -41,11 +42,12 @@ namespace praktika3
         private void OnlyLetters(KeyPressEventArgs e)
         {
             string Symbol = e.KeyChar.ToString();
-
+            // \b \u0001
             if (!Regex.Match(Symbol, @"[а-яА-Я]|[a-zA-Z]").Success)
-            {
                 e.Handled = true;
-            }
+            
+            if (Symbol == "\b" || Symbol == "\u0001")
+                e.Handled = false;
         }
 
         private bool EmailLegit(string email)
@@ -75,7 +77,12 @@ namespace praktika3
                 return true;
             }
 
-            return false;
+            return true; // testing
+        }
+
+        private bool isUserAdmin()
+        {
+            return true;
         }
 
         #endregion Checks
@@ -102,32 +109,26 @@ namespace praktika3
                 dateTimePicker.Value = DateTime.Parse(lines[(index - 1) * 8 + 7]);
         }
 
-        private void LoadUnsent() // чтение unsent.txt и запись значений в textbox`ы 
+        private void LoadUnsent() // получение данных из таблицы unsent и запись значений в textbox`ы 
         {
-            if (!File.Exists("unsent.txt"))
-            {
-                File.Create("unsent.txt").Close();
-                return;
+            if (_connection.State != ConnectionState.Open) _connection.Open();
+            var command = $"SELECT * FROM unsent";
+            new SqlDataAdapter(command, _connection).Fill(unsent);
 
-            }
-
-            try
-            {
-                string[] lines = File.ReadAllLines("unsent.txt");
-                tbxName.Text = lines[0];
-                tbxSurName.Text = lines[1];
-                tbxDadName.Text = lines[2];
-                tbxGroup.Text = lines[3];
-                tbxPosition.Text = lines[4];
-                tbxTheame.Text = lines[5];
-                tbxEmail.Text = lines[6];
-                if (DateTime.Parse(lines[7]) > DateTime.Now)
-                    dateTimePicker.Value = DateTime.Parse(lines[7]);
-            }
-            catch (Exception _) { }
+                var row = unsent.Select();
+                var lines = row[0].ItemArray;
+                tbxName.Text = lines[0].ToString();
+                tbxSurName.Text = lines[1].ToString();
+                tbxDadName.Text = lines[2].ToString();
+                tbxGroup.Text = lines[3].ToString();
+                tbxPosition.Text = lines[4].ToString();
+                tbxTheame.Text = lines[5].ToString();
+                tbxEmail.Text = lines[6].ToString();
+                if (DateTime.Parse(lines[7].ToString()) > DateTime.Now)
+                    dateTimePicker.Value = DateTime.Parse(lines[7].ToString());
         }
 
-        private void LoadListBox() // стартовая загрузка данных с savedata.txt в поля recordbox
+        private void LoadListBox() // стартовая загрузка встреч с Meetings в поля recordbox для админа и для пользователя
         {
             if (!File.Exists("savedData.txt"))
             {
@@ -145,35 +146,28 @@ namespace praktika3
             }
         }
 
-        private void SaveUnsent(TextBox tb)
+        private void SaveUnsent() // при закрытии формы запись данных из полей tbx в таблицу unsent
         {
-            if (tb.ReadOnly != true)
-            {
-                string fileName = "unsent.txt";
-                FileStream fstream = new FileStream(fileName, FileMode.Truncate);
+            if (_connection.State != ConnectionState.Open) _connection.Open();
 
-                StreamWriter sw = new StreamWriter(fstream);
-                fstream.Seek(0, SeekOrigin.End);
-                sw.WriteLine($"{tbxName.Text}\n{tbxSurName.Text}\n{tbxDadName.Text}\n{tbxGroup.Text}\n{tbxPosition.Text}\n{tbxTheame.Text}\n{tbxEmail.Text}\n{dateTimePicker.Value}");
-                sw.Close();
-            }
-        }
+            // очистка таблицы, чтобы всегда была только одна запись
+            var clear = "DELETE FROM unsent";
+            new SqlCommand(clear, _connection).ExecuteNonQuery();
 
-        private void SaveUnsent(DateTimePicker dt)
-        {
-            if (!File.Exists("unsent.txt"))
-                File.Create("unsent.txt").Close();
+            var command = "INSERT INTO unsent (name, surname, middle_name, groupp, position, theame, email, date_time, userID) VALUES (@name, @surname, @middle_name, @group, @position, @theame, @email, @date_time, @userid)";
 
-            if (dt.Enabled == true)
-            {
-                string fileName = "unsent.txt";
-                FileStream fstream = new FileStream(fileName, FileMode.Truncate);
+            var cmd = new SqlCommand(command, _connection);
+            cmd.Parameters.Add("@name", SqlDbType.VarChar).Value = tbxName.Text;
+            cmd.Parameters.Add("@surname", SqlDbType.VarChar).Value = tbxSurName.Text;
+            cmd.Parameters.Add("@middle_name", SqlDbType.VarChar).Value = tbxDadName.Text;
+            cmd.Parameters.Add("@group", SqlDbType.VarChar).Value = tbxGroup.Text;
+            cmd.Parameters.Add("@position", SqlDbType.VarChar).Value = tbxPosition.Text;
+            cmd.Parameters.Add("@theame", SqlDbType.VarChar).Value = tbxTheame.Text;
+            cmd.Parameters.Add("@email", SqlDbType.VarChar).Value = tbxEmail.Text;
+            cmd.Parameters.Add("@date_time", SqlDbType.DateTime).Value = dateTimePicker.Value;
+            cmd.Parameters.Add("@userid", SqlDbType.Int).Value = _userID;
 
-                StreamWriter sw = new StreamWriter(fstream);
-                fstream.Seek(0, SeekOrigin.End);
-                sw.WriteLine($"{tbxName.Text}\n{tbxSurName.Text}\n{tbxDadName.Text}\n{tbxGroup.Text}\n{tbxPosition.Text}\n{tbxTheame.Text}\n{tbxEmail.Text}\n{dateTimePicker.Value}");
-                sw.Close();
-            }
+            cmd.ExecuteNonQuery();
         }
 
         #endregion Save/Load
@@ -187,41 +181,31 @@ namespace praktika3
         private void textBox1_KeyPress(object sender, KeyPressEventArgs e)
         {
             OnlyLetters(e);
-            SaveUnsent(tbxName);
         }
 
         private void textBox2_KeyPress(object sender, KeyPressEventArgs e)
         {
             OnlyLetters(e);
-            SaveUnsent(tbxSurName);
         }
 
         private void textBox3_KeyPress(object sender, KeyPressEventArgs e)
         {
             OnlyLetters(e);
-            SaveUnsent(tbxDadName);
         }
 
         private void textBox5_KeyPress(object sender, KeyPressEventArgs e)
         {
             OnlyLetters(e);
-            SaveUnsent(tbxPosition);
         }
 
         private void textBox6_KeyPress(object sender, KeyPressEventArgs e)
         {
             OnlyLetters(e);
-            SaveUnsent(tbxTheame);
-        }
-
-        private void textBox4_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            SaveUnsent(tbxGroup);
         }
 
         private void textBox7_KeyPress(object sender, KeyPressEventArgs e)
         {
-            SaveUnsent(tbxEmail);
+            
         }
 
         #endregion Input
@@ -233,7 +217,7 @@ namespace praktika3
             dateTimePicker.MaxDate = dateTimePicker.Value.AddDays(45);
             recordsBox.Items.Add("(черновик)");
 
-            LoadUnsent(); // загрузка с unsent.txt незавершенной анкеты
+            LoadUnsent(); // загрузка с unsent.txt незавершенной анкеты (черновик)
             LoadListBox(); // чтение savedData.txt и загрузка значений в recordBox
         }
 
@@ -353,7 +337,6 @@ namespace praktika3
         {
             WorkingHours newForm = new WorkingHours(this.Left, this.Top, this.Height, this.Width);
             newForm.Show();
-
         }
 
         private void recordsBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -397,6 +380,8 @@ namespace praktika3
         private void Appointment_FormClosing(object sender, FormClosingEventArgs e)
         {
             _parentForm.Close();
+            SaveUnsent();
+            _connection.Dispose();
         }
 
         #endregion Events
