@@ -40,7 +40,6 @@ namespace praktika3
             this.Email = new System.Windows.Forms.Label();
             this.Subject = new System.Windows.Forms.Label();
             this.Position = new System.Windows.Forms.Label();
-            this.tbxGroup = new System.Windows.Forms.TextBox();
             this.tbxDadName = new System.Windows.Forms.TextBox();
             this.tbxSurName = new System.Windows.Forms.TextBox();
             this.Group = new System.Windows.Forms.Label();
@@ -55,6 +54,7 @@ namespace praktika3
             this.btnWorkingHours = new System.Windows.Forms.Button();
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
             this.recordsBox = new System.Windows.Forms.ListBox();
+            this.tbxGroup = new System.Windows.Forms.TextBox();
             this.backGroundColor.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -170,15 +170,6 @@ namespace praktika3
             this.Position.Size = new System.Drawing.Size(164, 38);
             this.Position.TabIndex = 48;
             this.Position.Text = "Должность:";
-            // 
-            // tbxGroup
-            // 
-            this.tbxGroup.Location = new System.Drawing.Point(195, 381);
-            this.tbxGroup.Margin = new System.Windows.Forms.Padding(4);
-            this.tbxGroup.Name = "tbxGroup";
-            this.tbxGroup.Size = new System.Drawing.Size(455, 31);
-            this.tbxGroup.TabIndex = 47;
-            this.tbxGroup.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBox4_KeyPress);
             // 
             // tbxDadName
             // 
@@ -299,6 +290,7 @@ namespace praktika3
             // backGroundColor
             // 
             this.backGroundColor.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(80)))), ((int)(((byte)(126)))), ((int)(((byte)(162)))));
+            this.backGroundColor.Controls.Add(this.tbxGroup);
             this.backGroundColor.Controls.Add(this.btnWorkingHours);
             this.backGroundColor.Controls.Add(this.linkLabel1);
             this.backGroundColor.Controls.Add(this.recordsBox);
@@ -319,7 +311,6 @@ namespace praktika3
             this.backGroundColor.Controls.Add(this.tbxDadName);
             this.backGroundColor.Controls.Add(this.Group);
             this.backGroundColor.Controls.Add(this.datetime);
-            this.backGroundColor.Controls.Add(this.tbxGroup);
             this.backGroundColor.Controls.Add(this.Email);
             this.backGroundColor.Controls.Add(this.Position);
             this.backGroundColor.Controls.Add(this.Subject);
@@ -364,6 +355,13 @@ namespace praktika3
             this.recordsBox.TabIndex = 63;
             this.recordsBox.SelectedIndexChanged += new System.EventHandler(this.recordsBox_SelectedIndexChanged);
             // 
+            // tbxGroup
+            // 
+            this.tbxGroup.Location = new System.Drawing.Point(195, 382);
+            this.tbxGroup.Name = "tbxGroup";
+            this.tbxGroup.Size = new System.Drawing.Size(455, 31);
+            this.tbxGroup.TabIndex = 66;
+            // 
             // Appointment
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 25F);
@@ -398,7 +396,6 @@ namespace praktika3
         private System.Windows.Forms.Label Email;
         private System.Windows.Forms.Label Subject;
         private System.Windows.Forms.Label Position;
-        private System.Windows.Forms.TextBox tbxGroup;
         private System.Windows.Forms.TextBox tbxDadName;
         private System.Windows.Forms.TextBox tbxSurName;
         private System.Windows.Forms.Label Group;
@@ -413,6 +410,7 @@ namespace praktika3
         private System.Windows.Forms.ListBox recordsBox;
         private System.Windows.Forms.LinkLabel linkLabel1;
         private System.Windows.Forms.Button btnWorkingHours;
+        private System.Windows.Forms.TextBox tbxGroup;
     }
 }
 
