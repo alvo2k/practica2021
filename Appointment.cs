@@ -25,6 +25,7 @@ namespace praktika3
         Authorization _parentForm;
         SqlConnection _connection;
         int _userID;
+        bool _isAdmin;
         DataTable unsent = new DataTable();
         
         public Appointment(Authorization parent, SqlConnection connection, int userID)
@@ -82,7 +83,19 @@ namespace praktika3
 
         private bool isUserAdmin()
         {
-            return true;
+            if (_connection.State != ConnectionState.Open) _connection.Open();
+            DataTable admin = new DataTable();
+            var command = $"SELECT admin FROM users WHERE userID='{_userID}'";
+            new SqlDataAdapter(command, _connection).Fill(admin);
+            var isAdmin = admin.Rows[0][0];
+
+            if (Convert.ToInt32(isAdmin) == 1)
+            {
+                isAdmin = true;
+                return true;
+            }
+            
+            return false;
         }
 
         #endregion Checks
@@ -128,7 +141,7 @@ namespace praktika3
                     dateTimePicker.Value = DateTime.Parse(lines[7].ToString());
         }
 
-        private void LoadListBox() // стартовая загрузка встреч с Meetings в поля recordbox для админа и для пользователя
+        private void LoadListBox() // стартовая загрузка встреч с Meetings в поля recordbox. для админа все записи, для пользователя только его
         {
             if (!File.Exists("savedData.txt"))
             {
@@ -217,11 +230,12 @@ namespace praktika3
             dateTimePicker.MaxDate = dateTimePicker.Value.AddDays(45);
             recordsBox.Items.Add("(черновик)");
 
-            LoadUnsent(); // загрузка с unsent.txt незавершенной анкеты (черновик)
+            LoadUnsent(); // загрузка с unsent незавершенной анкеты (черновик)
             LoadListBox(); // чтение savedData.txt и загрузка значений в recordBox
+            isUserAdmin();
         }
 
-        private void Submit_Click(object sender, EventArgs e)
+        private void Submit_Click(object sender, EventArgs e) // TODO
         {
             if (!TimeCheck())
             {
@@ -272,9 +286,9 @@ namespace praktika3
             {
                 MessageBox.Show("Введите все обязательные поля помеченые \"*\"", "Не все обязательные поля были заполнены!");
             }
-        }
+        } 
 
-        private void cancelRecord_Click(object sender, EventArgs e)
+        private void cancelRecord_Click(object sender, EventArgs e) // TODO
         {
             SmtpClient Smtp = new SmtpClient("smtp.yandex.ru", 25);
             Smtp.Credentials = new NetworkCredential("voenkov-alex@yandex.ru", "yatfbpdghuvatpae");
