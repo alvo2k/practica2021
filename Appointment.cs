@@ -100,7 +100,7 @@ namespace praktika3
 
         #region Save/Load
 
-        private void LoadSentRecord(int index) // чтение из saveddata.txt со строки index * 8 и запись в textbox`ы readonly
+        private void LoadSentRecord(int idMeeting) // чтение из Meetings и запись в textbox`ы readonly
         {
             /*string[] lines = File.ReadAllLines("savedData.txt");
             tbxName.Text = lines[(index - 1) * 8];
@@ -382,8 +382,7 @@ namespace praktika3
         private void recordsBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (recordsBox.SelectedItem != null)
-            {
-                
+            {                
                 if (recordsBox.SelectedIndex == 0)
                 {
                     cancelRecord.Enabled = false;
@@ -409,7 +408,6 @@ namespace praktika3
                     dateTimePicker.Enabled = false;
                     LoadSentRecord(recordsBox.SelectedIndex);
                 }
-
             }
         }
 
