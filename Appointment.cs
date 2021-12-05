@@ -6,6 +6,7 @@ using System.IO;
 using System.Text.RegularExpressions;
 using Microsoft.Data.SqlClient;
 using System.Data;
+using System.Collections.Generic;
 
 namespace praktika3
 {
@@ -90,10 +91,7 @@ namespace praktika3
             var isAdmin = admin.Rows[0][0];
 
             if (Convert.ToInt32(isAdmin) == 1)
-            {
-                isAdmin = true;
-                return true;
-            }
+                return true;            
             
             return false;
         }
@@ -101,9 +99,10 @@ namespace praktika3
         #endregion Checks
 
         #region Save/Load
+
         private void LoadSentRecord(int index) // чтение из saveddata.txt со строки index * 8 и запись в textbox`ы readonly
         {
-            string[] lines = File.ReadAllLines("savedData.txt");
+            /*string[] lines = File.ReadAllLines("savedData.txt");
             tbxName.Text = lines[(index - 1) * 8];
             tbxName.ReadOnly = true;
             tbxSurName.Text = lines[(index - 1) * 8 + 1];
@@ -119,7 +118,7 @@ namespace praktika3
             tbxEmail.Text = lines[(index - 1) * 8 + 6];
             tbxEmail.ReadOnly = true;
             if (DateTime.Parse(lines[(index - 1) * 8 + 7]) > DateTime.Now)
-                dateTimePicker.Value = DateTime.Parse(lines[(index - 1) * 8 + 7]);
+                dateTimePicker.Value = DateTime.Parse(lines[(index - 1) * 8 + 7]);*/
         }
 
         private void LoadUnsent() // получение данных из таблицы unsent и запись значений в textbox`ы 
@@ -141,21 +140,48 @@ namespace praktika3
                     dateTimePicker.Value = DateTime.Parse(lines[7].ToString());
         }
 
-        private void LoadListBox() // стартовая загрузка встреч с Meetings в поля recordbox. для админа все записи, для пользователя только его
+        private void LoadListBox() // стартовая загрузка встреч с Meetings в поля recordbox. Для админа все записи, для пользователя только его
         {
-            if (!File.Exists("savedData.txt"))
-            {
-                File.Create("savedData.txt").Close();
-                return;
+            if (_connection.State != ConnectionState.Open) _connection.Open();
+
+            DataTable meetings = new DataTable();
+
+            if (_isAdmin)
+            {                
+                var command = $"SELECT * FROM Meetings";
+                new SqlDataAdapter(command, _connection).Fill(meetings);
+
+                var source = new DataTable();
+                source.Columns.Add(new DataColumn("idMeeting"));
+                source.Columns.Add(new DataColumn("theameDateTime"));
+                source.Rows.Add(0, "(черновик)");
+                for (int q = 0; q < meetings.Rows.Count; q++)
+                {                    
+                    source.Rows.Add(meetings.Rows[q][0], $"{meetings.Rows[q][6]} {meetings.Rows[q][8]}"); // idMeeting, тема и время                                                                             
+                }
+                recordsBox.ValueMember = "idMeeting";
+                recordsBox.DisplayMember = "theameDateTime";
+                recordsBox.Items.Add("(черновик)");
+                recordsBox.DataSource = source;
             }
-
-            string[] lines = File.ReadAllLines("savedData.txt");
-
-            int i = 5;
-            while (i < lines.Length)
+            else
             {
-                recordsBox.Items.Add($"{lines[i]} {lines[i + 2]}");
-                i += 8;
+                var command = $"SELECT * FROM Meetings WHERE userID='{_userID}'";
+                new SqlDataAdapter(command, _connection).Fill(meetings);
+
+                if (meetings.Rows == null) return;
+
+                var source = new DataTable();
+                source.Columns.Add(new DataColumn("idMeeting"));
+                source.Columns.Add(new DataColumn("theameDateTime"));
+                source.Rows.Add(0, "(черновик)");
+                for (int q = 0; q < meetings.Rows.Count; q++)
+                {
+                    source.Rows.Add(meetings.Rows[q][0], $"{meetings.Rows[q][6]} {meetings.Rows[q][8]}"); // idMeeting, тема и время                                                                             
+                }
+                recordsBox.ValueMember = "idMeeting";
+                recordsBox.DisplayMember = "theameDateTime";
+                recordsBox.DataSource = source;
             }
         }
 
@@ -228,11 +254,11 @@ namespace praktika3
             dateTimePicker.Value = DateTime.Now;
             dateTimePicker.MinDate = DateTime.Now;
             dateTimePicker.MaxDate = dateTimePicker.Value.AddDays(45);
-            recordsBox.Items.Add("(черновик)");
 
+            _isAdmin = isUserAdmin();
             LoadUnsent(); // загрузка с unsent незавершенной анкеты (черновик)
-            LoadListBox(); // чтение savedData.txt и загрузка значений в recordBox
-            isUserAdmin();
+            LoadListBox(); // чтение Meetings и загрузка встреч в recordBox
+            
         }
 
         private void Submit_Click(object sender, EventArgs e) // TODO
@@ -357,17 +383,8 @@ namespace praktika3
         {
             if (recordsBox.SelectedItem != null)
             {
-                if (recordsBox.SelectedItem.ToString() != "(черновик)")
-                {
-                    cancelRecord.Enabled = true;
-                    cancelRecord.Visible = true;
-                    Submit.Enabled = false;
-                    clearForm.Enabled = false;
-                    dateTimePicker.Enabled = false;
-                    LoadSentRecord(recordsBox.SelectedIndex);
-                }
-
-                if (recordsBox.SelectedItem.ToString() == "(черновик)")
+                
+                if (recordsBox.SelectedIndex == 0)
                 {
                     cancelRecord.Enabled = false;
                     cancelRecord.Visible = false;
@@ -383,6 +400,16 @@ namespace praktika3
                     tbxEmail.ReadOnly = false;
                     LoadUnsent();
                 }
+                else
+                {
+                    cancelRecord.Enabled = true;
+                    cancelRecord.Visible = true;
+                    Submit.Enabled = false;
+                    clearForm.Enabled = false;
+                    dateTimePicker.Enabled = false;
+                    LoadSentRecord(recordsBox.SelectedIndex);
+                }
+
             }
         }
 
