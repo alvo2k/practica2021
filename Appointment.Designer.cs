@@ -323,7 +323,6 @@ namespace praktika3
             // showCanceled
             // 
             this.showCanceled.AutoSize = true;
-            this.showCanceled.Enabled = false;
             this.showCanceled.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.showCanceled.ForeColor = System.Drawing.SystemColors.Control;
             this.showCanceled.Location = new System.Drawing.Point(1107, 447);

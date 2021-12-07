@@ -84,6 +84,7 @@
             this.tbxLogin.Name = "tbxLogin";
             this.tbxLogin.Size = new System.Drawing.Size(387, 31);
             this.tbxLogin.TabIndex = 2;
+            this.tbxLogin.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.tbxLogin_KeyPress);
             // 
             // lblLogin
             // 

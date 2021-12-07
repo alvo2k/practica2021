@@ -59,6 +59,17 @@ namespace praktika3
                 e.Handled = false;
         }
 
+        private void OnlyEnglish(KeyPressEventArgs e)
+        {
+            string Symbol = e.KeyChar.ToString();
+            // \b \u0001
+            if (Regex.Match(Symbol, @"[а-яА-Я]").Success)
+                e.Handled = true;
+
+            if (Symbol == "\u0001")
+                e.Handled = false;
+        }
+
         private bool EmailLegit(string email)
         {
             try
@@ -168,16 +179,17 @@ namespace praktika3
             DataTable meetings = new DataTable();
 
             if (_isAdmin)
-            {                
-                var command = $"SELECT * FROM Meetings";
+            {
+                string command;
+
+                if (showCanceled.Checked) command = $"SELECT * FROM Meetings";
+                else command = $"SELECT * FROM Meetings WHERE canceled=0";
+
                 new SqlDataAdapter(command, _connection).Fill(meetings);
 
                 var source = new DataTable();
                 source.Columns.Add(new DataColumn("idMeeting"));
                 source.Columns.Add(new DataColumn("theameDateTime"));
-
-                if (!_isAdmin)
-                    source.Rows.Add(0, "(черновик)");
 
                 for (int q = 0; q < meetings.Rows.Count; q++)
                 {
@@ -409,7 +421,7 @@ namespace praktika3
 
         private void textBox7_KeyPress(object sender, KeyPressEventArgs e)
         {
-            
+            OnlyEnglish(e);
         }
 
         #endregion Input
@@ -423,11 +435,10 @@ namespace praktika3
             _isAdmin = isUserAdmin();
             LoadUnsent(); // загрузка с unsent незавершенной анкеты (черновик)
             LoadListBox(); // чтение Meetings и загрузка встреч в recordBox
-            if(_isAdmin)
+            if(!_isAdmin)
             {
-                Submit.Enabled = false;
-                clearForm.Enabled = false;
-                showCanceled.Enabled = true;
+                showCanceled.Enabled = false;
+                showCanceled.Visible = false;
             }
         }
 
@@ -536,7 +547,7 @@ namespace praktika3
 
         private void showCanceled_CheckedChanged(object sender, EventArgs e)
         {
-
+            LoadListBox();
         }
 
         private void Appointment_FormClosing(object sender, FormClosingEventArgs e)
@@ -545,6 +556,7 @@ namespace praktika3
             SaveUnsent();
             _connection.Dispose();
         }
+
 
         #endregion Events
 

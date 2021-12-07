@@ -28,6 +28,17 @@ namespace praktika3
 
         #region Methods
 
+        private void OnlyEnglish(KeyPressEventArgs e)
+        {
+            string Symbol = e.KeyChar.ToString();
+            // \b \u0001
+            if (Regex.Match(Symbol, @"[а-яА-Я]").Success)
+                e.Handled = true;
+
+            if (Symbol == "\u0001")
+                e.Handled = false;
+        }
+
         private void ProceedAppointment(int userID)
         {
             this.SetVisibleCore(false);
@@ -148,6 +159,11 @@ namespace praktika3
             }
         }
 
+        private void tbxLogin_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            OnlyEnglish(e);
+        }
+
         private void Authorization_Load(object sender, EventArgs e)
         {
             loggingIn.Top = loggingIn.Top - 50;
@@ -235,5 +251,7 @@ namespace praktika3
         }
 
         #endregion Checks
+
+        
     }
 }
