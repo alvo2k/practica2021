@@ -108,21 +108,25 @@ namespace praktika3
             var command = $"SELECT * FROM Meetings WHERE idMeeting='{idMeeting}'";
             new SqlDataAdapter(command, _connection).Fill(selectedMeeting);
 
-            tbxName.Text = selectedMeeting[0]["name"];
+            tbxName.Text = selectedMeeting.Rows[0]["name"].ToString();
             tbxName.ReadOnly = true;
-            tbxSurName.Text = selectedMeeting[0]["surname"];
+            tbxSurName.Text = selectedMeeting.Rows[0]["surname"].ToString();
             tbxSurName.ReadOnly = true;
-            tbxDadName.Text = selectedMeeting[0]["middle_name"];
+            tbxDadName.Text = selectedMeeting.Rows[0]["middle_name"].ToString();
             tbxDadName.ReadOnly = true;
-            tbxGroup.Text = selectedMeeting[0]["groupp"];
+            tbxGroup.Text = selectedMeeting.Rows[0]["group"].ToString();
             tbxGroup.ReadOnly = true;
-            tbxPosition.Text = selectedMeeting[0]["position"];
+            tbxPosition.Text = selectedMeeting.Rows[0]["position"].ToString();
             tbxPosition.ReadOnly = true;
-            tbxTheame.Text = selectedMeeting[0]["theame"];
+            tbxTheame.Text = selectedMeeting.Rows[0]["theame"].ToString();
             tbxTheame.ReadOnly = true;
-            tbxEmail.Text = selectedMeeting[0]["email"];
+            tbxEmail.Text = selectedMeeting.Rows[0]["email"].ToString();
             tbxEmail.ReadOnly = true;
-            dateTimePicker.Value = selectedMeeting[0][8]; // TODO название колонки времени & readonly datetimepicker
+            try
+            {
+                dateTimePicker.Value = DateTime.Parse(selectedMeeting.Rows[0]["date_time"].ToString()); //  readonly datetimepicker
+            }
+            catch (Exception ex) { }
 
             //if (DateTime.Parse(lines[(index - 1) * 8 + 7]) > DateTime.Now) зачем??
             //    dateTimePicker.Value = DateTime.Parse(lines[(index - 1) * 8 + 7]);
@@ -166,7 +170,7 @@ namespace praktika3
 
                 for (int q = 0; q < meetings.Rows.Count; q++)
                 {                    
-                    source.Rows.Add(meetings.Rows[q][0], $"{meetings.Rows[q][6]} {meetings.Rows[q][8]}"); // idMeeting, тема и время                                                                             
+                    source.Rows.Add(meetings.Rows[q][0], $"{meetings.Rows[q]["theame"]} {meetings.Rows[q]["date_time"]}"); // idMeeting, тема и время                                                                             
                 }
 
                 recordsBox.ValueMember = "idMeeting";
