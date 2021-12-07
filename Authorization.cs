@@ -24,7 +24,7 @@ namespace praktika3
         SqlConnection connection = new SqlConnection();
         public Authorization()
         {
-            InitializeComponent();
+            InitializeComponent();            
         }
 
         #region Methods
@@ -155,6 +155,10 @@ namespace praktika3
 
             this.Height = this.Height - 50;
             DBConnect();
+
+            // testing 
+            this.Hide();
+            ProceedAppointment(1);
         }
 
         #endregion Events        

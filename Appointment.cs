@@ -6,8 +6,6 @@ using System.IO;
 using System.Text.RegularExpressions;
 using Microsoft.Data.SqlClient;
 using System.Data;
-using System.Collections.Generic;
-
 namespace praktika3
 {
     public partial class Appointment : Form
@@ -138,6 +136,8 @@ namespace praktika3
             var command = $"SELECT * FROM unsent";
             new SqlDataAdapter(command, _connection).Fill(unsent);
 
+            try
+            {
                 var row = unsent.Select();
                 var lines = row[0].ItemArray;
                 tbxName.Text = lines[0].ToString();
@@ -149,6 +149,8 @@ namespace praktika3
                 tbxEmail.Text = lines[6].ToString();
                 if (DateTime.Parse(lines[7].ToString()) > DateTime.Now)
                     dateTimePicker.Value = DateTime.Parse(lines[7].ToString());
+            }
+            catch { }
         }
 
         private void LoadListBox() // DONE стартовая загрузка встреч с Meetings в поля recordbox. Для админа все записи, для пользователя только его
@@ -207,17 +209,17 @@ namespace praktika3
             var clear = "DELETE FROM unsent";
             new SqlCommand(clear, _connection).ExecuteNonQuery();
 
-            var command = "INSERT INTO unsent (name, surname, middle_name, groupp, position, theame, email, date_time, userID) VALUES (@name, @surname, @middle_name, @group, @position, @theame, @email, @date_time, @userid)";
+            var command = $"INSERT INTO unsent (name, surname, middle_name, groupp, position, theame, email, date_time, userID) VALUES (@name, @surname, @middle_name, @group, @position, @theame, @email, @date_time, @userid)";
 
             var cmd = new SqlCommand(command, _connection);
-            cmd.Parameters.Add("@name", SqlDbType.VarChar).Value = tbxName.Text;
-            cmd.Parameters.Add("@surname", SqlDbType.VarChar).Value = tbxSurName.Text;
-            cmd.Parameters.Add("@middle_name", SqlDbType.VarChar).Value = tbxDadName.Text;
-            cmd.Parameters.Add("@group", SqlDbType.VarChar).Value = tbxGroup.Text;
-            cmd.Parameters.Add("@position", SqlDbType.VarChar).Value = tbxPosition.Text;
-            cmd.Parameters.Add("@theame", SqlDbType.VarChar).Value = tbxTheame.Text;
-            cmd.Parameters.Add("@email", SqlDbType.VarChar).Value = tbxEmail.Text;
-            cmd.Parameters.Add("@date_time", SqlDbType.DateTime).Value = dateTimePicker.Value;
+            cmd.Parameters.Add("@name", SqlDbType.NVarChar).Value = tbxName.Text;
+            cmd.Parameters.Add("@surname", SqlDbType.NVarChar).Value = tbxSurName.Text;
+            cmd.Parameters.Add("@middle_name", SqlDbType.NVarChar).Value = tbxDadName.Text;
+            cmd.Parameters.Add("@group", SqlDbType.NVarChar).Value = tbxGroup.Text;
+            cmd.Parameters.Add("@position", SqlDbType.NVarChar).Value = tbxPosition.Text;
+            cmd.Parameters.Add("@theame", SqlDbType.NVarChar).Value = tbxTheame.Text;
+            cmd.Parameters.Add("@email", SqlDbType.NVarChar).Value = tbxEmail.Text;
+            cmd.Parameters.Add("@date_time", SqlDbType.DateTime).Value = dateTimePicker.Value.ToString();
             cmd.Parameters.Add("@userid", SqlDbType.Int).Value = _userID;
 
             cmd.ExecuteNonQuery();
@@ -422,10 +424,9 @@ namespace praktika3
             }
         }
 
-        private void linkLabel1_Click(object sender, EventArgs e) // заменить на LinkButton 
+        private void linkLabel1_Click(object sender, EventArgs e)
         {
             System.Diagnostics.Process.Start("C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe", "https://mgok.mskobr.ru/#/");
-            //System.Diagnostics.Process.Start("http://www.website.com");
         }
 
         private void Appointment_FormClosing(object sender, FormClosingEventArgs e)
