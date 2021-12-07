@@ -156,8 +156,7 @@ namespace praktika3
             this.Height = this.Height - 50;
             DBConnect();
 
-            // testing 
-            this.Hide();
+            // testing
             ProceedAppointment(1);
         }
 

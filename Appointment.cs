@@ -65,20 +65,20 @@ namespace praktika3
             }
         }
 
-        private bool TimeCheck()
+        private bool IsHasFreeTime()
         {
-            bool hasFreeTime = true;
-            foreach (string str in recordsBox.Items)
+            foreach (DataRowView row in recordsBox.Items)
             {
+                string str = row["theameDateTime"].ToString();
                 if (str.Contains(dateTimePicker.Value.ToString()))
-                    hasFreeTime = false;
+                    return false;
             }
-            if (dateTimePicker.Value.Hour >= 8 && dateTimePicker.Value.Hour <= 17 && dateTimePicker.Value.Hour != 13 && dateTimePicker.Value.Hour != 14 && dateTimePicker.Value.DayOfWeek != 0 && hasFreeTime)
+            if (dateTimePicker.Value.Hour >= 8 && dateTimePicker.Value.Hour <= 17 && dateTimePicker.Value.Hour != 13 && dateTimePicker.Value.Hour != 14 && dateTimePicker.Value.DayOfWeek != 0)
             {
                 return true;
             }
 
-            return true; // testing
+            return true; // testing false
         }
 
         private bool isUserAdmin()
@@ -112,7 +112,7 @@ namespace praktika3
             tbxSurName.ReadOnly = true;
             tbxDadName.Text = selectedMeeting.Rows[0]["middle_name"].ToString();
             tbxDadName.ReadOnly = true;
-            tbxGroup.Text = selectedMeeting.Rows[0]["group"].ToString();
+            tbxGroup.Text = selectedMeeting.Rows[0]["groupp"].ToString();
             tbxGroup.ReadOnly = true;
             tbxPosition.Text = selectedMeeting.Rows[0]["position"].ToString();
             tbxPosition.ReadOnly = true;
@@ -153,7 +153,7 @@ namespace praktika3
             catch { }
         }
 
-        private void LoadListBox() // DONE стартовая загрузка встреч с Meetings в поля recordbox. Для админа все записи, для пользователя только его
+        private void LoadListBox() // DONE загрузка встреч с Meetings в поля recordbox. Для админа все записи, для пользователя только его
         {
             if (_connection.State != ConnectionState.Open) _connection.Open();
 
@@ -171,29 +171,31 @@ namespace praktika3
                 source.Rows.Add(0, "(черновик)");
 
                 for (int q = 0; q < meetings.Rows.Count; q++)
-                {                    
-                    source.Rows.Add(meetings.Rows[q][0], $"{meetings.Rows[q]["theame"]} {meetings.Rows[q]["date_time"]}"); // idMeeting, тема и время                                                                             
+                {
+                    source.Rows.Add(meetings.Rows[q]["IdMeeting"], $"{meetings.Rows[q]["theame"]} {meetings.Rows[q]["date_time"]}"); // idMeeting, тема и время                                                                             
                 }
 
                 recordsBox.ValueMember = "idMeeting";
                 recordsBox.DisplayMember = "theameDateTime";
-                recordsBox.Items.Add("(черновик)");
                 recordsBox.DataSource = source;
             }
             else
             {
                 var command = $"SELECT * FROM Meetings WHERE userID='{_userID}'";
-                new SqlDataAdapter(command, _connection).Fill(meetings);
-
-                if (meetings.Rows == null) return;
+                new SqlDataAdapter(command, _connection).Fill(meetings);               
 
                 var source = new DataTable();
                 source.Columns.Add(new DataColumn("idMeeting"));
                 source.Columns.Add(new DataColumn("theameDateTime"));
+
                 source.Rows.Add(0, "(черновик)");
-                for (int q = 0; q < meetings.Rows.Count; q++)
+
+                if (meetings.Rows != null)
                 {
-                    source.Rows.Add(meetings.Rows[q][0], $"{meetings.Rows[q][6]} {meetings.Rows[q][8]}"); // idMeeting, тема и время                                                                             
+                    for (int q = 0; q < meetings.Rows.Count; q++)
+                    {
+                        source.Rows.Add(meetings.Rows[q][0], $"{meetings.Rows[q][6]} {meetings.Rows[q][8]}"); // idMeeting, тема и время                                                                             
+                    }
                 }
                 recordsBox.ValueMember = "idMeeting";
                 recordsBox.DisplayMember = "theameDateTime";
@@ -225,14 +227,79 @@ namespace praktika3
             cmd.ExecuteNonQuery();
         }
 
-        private void SaveMeeting()
+        private void SaveMeeting() // при нажатии отправки отправляется письмо и запрос в Meetings
         {
+            if (_connection.State != ConnectionState.Open) _connection.Open();
+            var command = $"INSERT INTO Meetings (name, surname, middle_name, groupp, position, theame, email, date_time, userID) VALUES (@name, @surname, @middle_name, @group, @position, @theame, @email, @date_time, @userid)";
 
+            var cmd = new SqlCommand(command, _connection);
+            cmd.Parameters.Add("@name", SqlDbType.NVarChar).Value = tbxName.Text;
+            cmd.Parameters.Add("@surname", SqlDbType.NVarChar).Value = tbxSurName.Text;
+            cmd.Parameters.Add("@middle_name", SqlDbType.NVarChar).Value = tbxDadName.Text;
+            cmd.Parameters.Add("@group", SqlDbType.NVarChar).Value = tbxGroup.Text;
+            cmd.Parameters.Add("@position", SqlDbType.NVarChar).Value = tbxPosition.Text;
+            cmd.Parameters.Add("@theame", SqlDbType.NVarChar).Value = tbxTheame.Text;
+            cmd.Parameters.Add("@email", SqlDbType.NVarChar).Value = tbxEmail.Text;
+            cmd.Parameters.Add("@date_time", SqlDbType.DateTime).Value = dateTimePicker.Value.ToString();
+            cmd.Parameters.Add("@userid", SqlDbType.Int).Value = _userID;
+
+            cmd.ExecuteNonQuery();
+
+            LoadListBox();
+            //SendMailToAdmin();
+            //SendMailToUser();
         }
 
         #endregion Save/Load
 
+        private void SendMailToAdmin()
+        {
+            SmtpClient Smtp = new SmtpClient("smtp.yandex.ru", 25);
+            Smtp.Credentials = new NetworkCredential("voenkov-alex@yandex.ru", "yatfbpdghuvatpae");
+            Smtp.EnableSsl = true;
+            Smtp.DeliveryMethod = SmtpDeliveryMethod.Network;
+            MailMessage Message = new MailMessage();
+            Message.From = new MailAddress("voenkov-alex@yandex.ru", "МГОК");
+            Message.To.Add(new MailAddress("voenkova@mgok.pro"));
+            Message.Subject = "Запись к директору";
+            string body = $"Новая запись!\n\n\nИмя: {tbxName.Text}\nФамилия: {tbxSurName.Text}\nОтчество: {tbxDadName.Text}\nГруппа: {tbxGroup.Text}\nДолжность: {tbxPosition.Text}\nТема: {tbxTheame.Text}\nE-mail: {tbxEmail.Text}\nВремя: {dateTimePicker.Value}";
+            Message.Body = body;
+            try
+            {
+                Smtp.Send(Message);
+            }
+            catch (SmtpException ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void SendMailToUser()
+        {
+            SmtpClient Smtp = new SmtpClient("smtp.yandex.ru", 25);
+            Smtp.Credentials = new NetworkCredential("voenkov-alex@yandex.ru", "yatfbpdghuvatpae");
+            Smtp.EnableSsl = true;
+            Smtp.DeliveryMethod = SmtpDeliveryMethod.Network;
+            MailMessage Message = new MailMessage();
+            Message.From = new MailAddress("voenkov-alex@yandex.ru", "МГОК");
+            Message.To.Add(new MailAddress($"{tbxEmail.Text}"));
+            Message.Subject = "Вы записались к директору";
+            string body = $"Вы записались к директору на: {dateTimePicker.Value}";
+            Message.Body = body;
+            try
+            {
+                Smtp.Send(Message);
+                MessageBox.Show("Вы были успешно записаны!" + Environment.NewLine + tbxName.Text + " " + tbxSurName.Text + " " + dateTimePicker.Value, "Запись");
+                recordsBox.Items.Add(tbxTheame.Text + " " + dateTimePicker.Value);
+            }
+            catch (SmtpException ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
         #endregion Methods
+
 
         #region Events
 
@@ -249,16 +316,6 @@ namespace praktika3
         }
 
         private void textBox3_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            OnlyLetters(e);
-        }
-
-        private void textBox5_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            OnlyLetters(e);
-        }
-
-        private void textBox6_KeyPress(object sender, KeyPressEventArgs e)
         {
             OnlyLetters(e);
         }
@@ -282,51 +339,27 @@ namespace praktika3
             
         }
 
-        private void Submit_Click(object sender, EventArgs e) // TODO
+        private void Submit_Click(object sender, EventArgs e) // DONE
         {
-            if (!TimeCheck())
+            if (!IsHasFreeTime())
             {
                 MessageBox.Show("На это время запись невозможна!", "Попробуйте выбрать другое время");
+                return;
             }
 
-            if (tbxName.Text != String.Empty && tbxSurName.Text != String.Empty && tbxTheame.Text != String.Empty && TimeCheck() && EmailLegit(tbxEmail.Text))
-            {
-                SmtpClient Smtp = new SmtpClient("smtp.yandex.ru", 25);
-                Smtp.Credentials = new NetworkCredential("voenkov-alex@yandex.ru", "yatfbpdghuvatpae");
-                Smtp.EnableSsl = true;
-                Smtp.DeliveryMethod = SmtpDeliveryMethod.Network;
-                MailMessage Message = new MailMessage();
-                Message.From = new MailAddress("voenkov-alex@yandex.ru");
-                Message.To.Add(new MailAddress("voenkova@mgok.pro")); // TODO отправлять сообщение о записи на логин (емаил) и админу
-                Message.Subject = "Запись к директору";
-                string body = $"Новая запись!\n\n\nИмя: {tbxName.Text}\nФамилия: {tbxSurName.Text}\nОтчество: {tbxDadName.Text}\nГруппа: {tbxGroup.Text}\nДолжность: {tbxPosition.Text}\nТема: {tbxTheame.Text}\nE-mail: {tbxEmail.Text}\nВремя: {dateTimePicker.Value}";
-                Message.Body = body;
-
-                try
-                {
-                    Smtp.Send(Message);
-                    MessageBox.Show("Вы были успешно записаны!" + Environment.NewLine + tbxName.Text + " " + tbxSurName.Text + " " + dateTimePicker.Value, "Запись");
-                    recordsBox.Items.Add(tbxTheame.Text + " " + dateTimePicker.Value);
-
-                    SaveMeeting();
-                }
-                catch (SmtpException ex)
-                {
-                    MessageBox.Show(ex.Message);
-                }
-            }
-
-
-
-            if (!EmailLegit(tbxEmail.Text))
+            if (tbxEmail.Text.Length > 0 && !EmailLegit(tbxEmail.Text))
             {
                 MessageBox.Show("Вы ввели неправильный email!", "Проверьте введенный email");
+                return;
             }
 
             if (tbxName.Text == String.Empty || tbxSurName.Text == String.Empty || tbxTheame.Text == String.Empty)
             {
                 MessageBox.Show("Введите все обязательные поля помеченые \"*\"", "Не все обязательные поля были заполнены!");
+                return;
             }
+
+            SaveMeeting();
         } 
 
         private void cancelRecord_Click(object sender, EventArgs e) // TODO
@@ -419,7 +452,8 @@ namespace praktika3
                     Submit.Enabled = false;
                     clearForm.Enabled = false;
                     dateTimePicker.Enabled = false;
-                    LoadSentRecord(recordsBox.SelectedIndex);
+                    DataRowView rowView = recordsBox.SelectedItem as DataRowView;
+                    LoadSentRecord(Convert.ToInt32(rowView[0]));
                 }
             }
         }

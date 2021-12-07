@@ -51,10 +51,10 @@ namespace praktika3
             this.records = new System.Windows.Forms.Label();
             this.cancelRecord = new System.Windows.Forms.Button();
             this.backGroundColor = new System.Windows.Forms.Panel();
+            this.tbxGroup = new System.Windows.Forms.TextBox();
             this.btnWorkingHours = new System.Windows.Forms.Button();
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
             this.recordsBox = new System.Windows.Forms.ListBox();
-            this.tbxGroup = new System.Windows.Forms.TextBox();
             this.backGroundColor.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -85,7 +85,6 @@ namespace praktika3
             this.tbxTheame.Name = "tbxTheame";
             this.tbxTheame.Size = new System.Drawing.Size(455, 31);
             this.tbxTheame.TabIndex = 55;
-            this.tbxTheame.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBox6_KeyPress);
             // 
             // tbxPosition
             // 
@@ -94,7 +93,6 @@ namespace praktika3
             this.tbxPosition.Name = "tbxPosition";
             this.tbxPosition.Size = new System.Drawing.Size(455, 31);
             this.tbxPosition.TabIndex = 54;
-            this.tbxPosition.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBox5_KeyPress);
             // 
             // clearForm
             // 
@@ -320,6 +318,13 @@ namespace praktika3
             this.backGroundColor.Size = new System.Drawing.Size(1484, 608);
             this.backGroundColor.TabIndex = 62;
             // 
+            // tbxGroup
+            // 
+            this.tbxGroup.Location = new System.Drawing.Point(195, 382);
+            this.tbxGroup.Name = "tbxGroup";
+            this.tbxGroup.Size = new System.Drawing.Size(455, 31);
+            this.tbxGroup.TabIndex = 66;
+            // 
             // btnWorkingHours
             // 
             this.btnWorkingHours.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(80)))), ((int)(((byte)(126)))), ((int)(((byte)(182)))));
@@ -354,13 +359,6 @@ namespace praktika3
             this.recordsBox.Size = new System.Drawing.Size(565, 79);
             this.recordsBox.TabIndex = 63;
             this.recordsBox.SelectedIndexChanged += new System.EventHandler(this.recordsBox_SelectedIndexChanged);
-            // 
-            // tbxGroup
-            // 
-            this.tbxGroup.Location = new System.Drawing.Point(195, 382);
-            this.tbxGroup.Name = "tbxGroup";
-            this.tbxGroup.Size = new System.Drawing.Size(455, 31);
-            this.tbxGroup.TabIndex = 66;
             // 
             // Appointment
             // 
