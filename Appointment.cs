@@ -20,8 +20,9 @@ namespace praktika3
         2. Востановление формы из recordsBox readonly
         3. Открытие ссылки в браузере
         4. Проверка валидности времени
-        5. Backspace в textbox'ax
 
+
+        Добавлена загрузка встечи из БД 
         */
         Authorization _parentForm;
         SqlConnection _connection;
@@ -102,23 +103,29 @@ namespace praktika3
 
         private void LoadSentRecord(int idMeeting) // чтение из Meetings и запись в textbox`ы readonly
         {
-            /*string[] lines = File.ReadAllLines("savedData.txt");
-            tbxName.Text = lines[(index - 1) * 8];
+            var selectedMeeting = new DataTable();
+            if (_connection.State != ConnectionState.Open) _connection.Open();
+            var command = $"SELECT * FROM Meetings WHERE idMeeting='{idMeeting}'";
+            new SqlDataAdapter(command, _connection).Fill(selectedMeeting);
+
+            tbxName.Text = selectedMeeting[0]["name"];
             tbxName.ReadOnly = true;
-            tbxSurName.Text = lines[(index - 1) * 8 + 1];
+            tbxSurName.Text = selectedMeeting[0]["surname"];
             tbxSurName.ReadOnly = true;
-            tbxDadName.Text = lines[(index - 1) * 8 + 2];
+            tbxDadName.Text = selectedMeeting[0]["middle_name"];
             tbxDadName.ReadOnly = true;
-            tbxGroup.Text = lines[(index - 1) * 8 + 3];
+            tbxGroup.Text = selectedMeeting[0]["groupp"];
             tbxGroup.ReadOnly = true;
-            tbxPosition.Text = lines[(index - 1) * 8 + 4];
+            tbxPosition.Text = selectedMeeting[0]["position"];
             tbxPosition.ReadOnly = true;
-            tbxTheame.Text = lines[(index - 1) * 8 + 5];
+            tbxTheame.Text = selectedMeeting[0]["theame"];
             tbxTheame.ReadOnly = true;
-            tbxEmail.Text = lines[(index - 1) * 8 + 6];
+            tbxEmail.Text = selectedMeeting[0]["email"];
             tbxEmail.ReadOnly = true;
-            if (DateTime.Parse(lines[(index - 1) * 8 + 7]) > DateTime.Now)
-                dateTimePicker.Value = DateTime.Parse(lines[(index - 1) * 8 + 7]);*/
+            dateTimePicker.Value = selectedMeeting[0][8]; // TODO название колонки времени & readonly datetimepicker
+
+            //if (DateTime.Parse(lines[(index - 1) * 8 + 7]) > DateTime.Now) зачем??
+            //    dateTimePicker.Value = DateTime.Parse(lines[(index - 1) * 8 + 7]);
         }
 
         private void LoadUnsent() // получение данных из таблицы unsent и запись значений в textbox`ы 
@@ -154,11 +161,14 @@ namespace praktika3
                 var source = new DataTable();
                 source.Columns.Add(new DataColumn("idMeeting"));
                 source.Columns.Add(new DataColumn("theameDateTime"));
+
                 source.Rows.Add(0, "(черновик)");
+
                 for (int q = 0; q < meetings.Rows.Count; q++)
                 {                    
                     source.Rows.Add(meetings.Rows[q][0], $"{meetings.Rows[q][6]} {meetings.Rows[q][8]}"); // idMeeting, тема и время                                                                             
                 }
+
                 recordsBox.ValueMember = "idMeeting";
                 recordsBox.DisplayMember = "theameDateTime";
                 recordsBox.Items.Add("(черновик)");
@@ -207,6 +217,11 @@ namespace praktika3
             cmd.Parameters.Add("@userid", SqlDbType.Int).Value = _userID;
 
             cmd.ExecuteNonQuery();
+        }
+
+        private void SaveMeeting()
+        {
+
         }
 
         #endregion Save/Load
@@ -276,7 +291,7 @@ namespace praktika3
                 Smtp.DeliveryMethod = SmtpDeliveryMethod.Network;
                 MailMessage Message = new MailMessage();
                 Message.From = new MailAddress("voenkov-alex@yandex.ru");
-                Message.To.Add(new MailAddress("voenkova@mgok.pro"));
+                Message.To.Add(new MailAddress("voenkova@mgok.pro")); // TODO отправлять сообщение о записи на логин (емаил) и админу
                 Message.Subject = "Запись к директору";
                 string body = $"Новая запись!\n\n\nИмя: {tbxName.Text}\nФамилия: {tbxSurName.Text}\nОтчество: {tbxDadName.Text}\nГруппа: {tbxGroup.Text}\nДолжность: {tbxPosition.Text}\nТема: {tbxTheame.Text}\nE-mail: {tbxEmail.Text}\nВремя: {dateTimePicker.Value}";
                 Message.Body = body;
@@ -287,13 +302,7 @@ namespace praktika3
                     MessageBox.Show("Вы были успешно записаны!" + Environment.NewLine + tbxName.Text + " " + tbxSurName.Text + " " + dateTimePicker.Value, "Запись");
                     recordsBox.Items.Add(tbxTheame.Text + " " + dateTimePicker.Value);
 
-                    string fileName = "savedData.txt";
-                    FileStream fstream = new FileStream(fileName, FileMode.Append);
-
-                    StreamWriter sw = new StreamWriter(fstream);
-                    fstream.Seek(0, SeekOrigin.End);
-                    sw.WriteLine($"{tbxName.Text}\n{tbxSurName.Text}\n{tbxDadName.Text}\n{tbxGroup.Text}\n{tbxPosition.Text}\n{tbxTheame.Text}\n{tbxEmail.Text}\n{dateTimePicker.Value}");
-                    sw.Close();
+                    SaveMeeting();
                 }
                 catch (SmtpException ex)
                 {
@@ -322,7 +331,7 @@ namespace praktika3
             Smtp.DeliveryMethod = SmtpDeliveryMethod.Network;
             MailMessage Message = new MailMessage();
             Message.From = new MailAddress("voenkov-alex@yandex.ru");
-            Message.To.Add(new MailAddress("voenkova@mgok.pro"));
+            Message.To.Add(new MailAddress("voenkova@mgok.pro")); // TODO отправлять сообщение об отмене записи на логин (емаил) и админу
             Message.Subject = "Отмена записи";
             string body = $"Отменить запись\n\n\n {recordsBox.SelectedItem.ToString()}";
             Message.Body = body;
@@ -330,7 +339,7 @@ namespace praktika3
             try
             {
                 Smtp.Send(Message);
-                recordsBox.Items.RemoveAt(recordsBox.SelectedIndex);
+                recordsBox.Items.RemoveAt(recordsBox.SelectedIndex); // TODO добавить в таблицу Meetings флаг отмены
                 MessageBox.Show("Запись успешно отменена!", "Отмена записи");
 
                 string[] InputFile = File.ReadAllLines(@"savedData.txt");
@@ -358,8 +367,6 @@ namespace praktika3
             {
                 MessageBox.Show(ex.Message);
             }
-
-
         }
 
         private void clearForm_Click(object sender, EventArgs e)
@@ -411,9 +418,10 @@ namespace praktika3
             }
         }
 
-        private void linkLabel1_Click(object sender, EventArgs e)
+        private void linkLabel1_Click(object sender, EventArgs e) // заменить на LinkButton 
         {
             System.Diagnostics.Process.Start("C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe", "https://mgok.mskobr.ru/#/");
+            //System.Diagnostics.Process.Start("http://www.website.com");
         }
 
         private void Appointment_FormClosing(object sender, FormClosingEventArgs e)
