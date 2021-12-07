@@ -101,7 +101,7 @@ namespace praktika3
 
         #region Save/Load
 
-        private void LoadSentRecord(int idMeeting) // чтение из Meetings и запись в textbox`ы readonly
+        private void LoadSentRecord(int idMeeting) // DONE чтение из Meetings и запись в textbox`ы readonly
         {
             var selectedMeeting = new DataTable();
             if (_connection.State != ConnectionState.Open) _connection.Open();
@@ -124,7 +124,7 @@ namespace praktika3
             tbxEmail.ReadOnly = true;
             try
             {
-                dateTimePicker.Value = DateTime.Parse(selectedMeeting.Rows[0]["date_time"].ToString()); //  readonly datetimepicker
+                dateTimePicker.Value = DateTime.Parse(selectedMeeting.Rows[0]["date_time"].ToString());
             }
             catch (Exception ex) { }
 
@@ -132,7 +132,7 @@ namespace praktika3
             //    dateTimePicker.Value = DateTime.Parse(lines[(index - 1) * 8 + 7]);
         }
 
-        private void LoadUnsent() // получение данных из таблицы unsent и запись значений в textbox`ы 
+        private void LoadUnsent() // DONE получение данных из таблицы unsent и запись значений в textbox`ы 
         {
             if (_connection.State != ConnectionState.Open) _connection.Open();
             var command = $"SELECT * FROM unsent";
@@ -151,7 +151,7 @@ namespace praktika3
                     dateTimePicker.Value = DateTime.Parse(lines[7].ToString());
         }
 
-        private void LoadListBox() // стартовая загрузка встреч с Meetings в поля recordbox. Для админа все записи, для пользователя только его
+        private void LoadListBox() // DONE стартовая загрузка встреч с Meetings в поля recordbox. Для админа все записи, для пользователя только его
         {
             if (_connection.State != ConnectionState.Open) _connection.Open();
 
@@ -199,7 +199,7 @@ namespace praktika3
             }
         }
 
-        private void SaveUnsent() // при закрытии формы запись данных из полей tbx в таблицу unsent
+        private void SaveUnsent() // DONE при закрытии формы запись данных из полей tbx в таблицу unsent
         {
             if (_connection.State != ConnectionState.Open) _connection.Open();
 
