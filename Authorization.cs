@@ -9,12 +9,11 @@ using System.IO;
 namespace praktika3
 {
         /* 
-         * 
+         
         --- TODO----
         
         1. Проверка на русские буквы в мыле
         2. Забыли пароль?
-        3. Переход табами
 
         */
 
@@ -157,7 +156,7 @@ namespace praktika3
             DBConnect();
 
             // testing
-            ProceedAppointment(1);
+            //ProceedAppointment(1);
         }
 
         #endregion Events        

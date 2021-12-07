@@ -15,9 +15,11 @@ namespace praktika3
         --- TODO----
         
         1. TimePicker
-        2. Востановление формы из recordsBox readonly
-        3. Открытие ссылки в браузере
         4. Проверка валидности времени
+        5. LoadListBox не выводить canceled
+        6. выводить canceled только для админа и если проставлен чекбокс
+        7. Ввести данные в textbox'ы из "профиля"
+        8. Если админ, то выключать отправить и очистить
 
 
         Добавлена загрузка встечи из БД 
@@ -27,6 +29,12 @@ namespace praktika3
         int _userID;
         bool _isAdmin;
         DataTable unsent = new DataTable();
+
+        enum letter
+        {
+            Create,
+            Cancel
+        }
         
         public Appointment(Authorization parent, SqlConnection connection, int userID)
         {
@@ -168,7 +176,8 @@ namespace praktika3
                 source.Columns.Add(new DataColumn("idMeeting"));
                 source.Columns.Add(new DataColumn("theameDateTime"));
 
-                source.Rows.Add(0, "(черновик)");
+                if (!_isAdmin)
+                    source.Rows.Add(0, "(черновик)");
 
                 for (int q = 0; q < meetings.Rows.Count; q++)
                 {
@@ -181,7 +190,7 @@ namespace praktika3
             }
             else
             {
-                var command = $"SELECT * FROM Meetings WHERE userID='{_userID}'";
+                var command = $"SELECT * FROM Meetings WHERE userID='{_userID}' AND canceled=0";
                 new SqlDataAdapter(command, _connection).Fill(meetings);               
 
                 var source = new DataTable();
@@ -245,14 +254,31 @@ namespace praktika3
 
             cmd.ExecuteNonQuery();
 
-            LoadListBox();
-            //SendMailToAdmin();
-            //SendMailToUser();
+            LoadListBox(); // update
+            recordsBox.SelectedIndex = recordsBox.Items.Count - 1;
+        }
+
+        private void CancelMeeting(int idMeeting)
+        {
+            if (_connection.State != ConnectionState.Open) _connection.Open();
+            var command = $"UPDATE Meetings SET canceled = 1 WHERE idMeeting='{idMeeting}'";
+
+            var cmd = new SqlCommand(command, _connection);
+            cmd.ExecuteNonQuery();
+
+            LoadListBox(); // update
+        }
+
+        private void RemoveUnsent() // после отправки формы удалить черновик
+        {
+            if (_connection.State != ConnectionState.Open) _connection.Open();
+            var clear = "DELETE FROM unsent";
+            new SqlCommand(clear, _connection).ExecuteNonQuery();
         }
 
         #endregion Save/Load
 
-        private void SendMailToAdmin()
+        private void SendMailToAdmin(letter let)
         {
             SmtpClient Smtp = new SmtpClient("smtp.yandex.ru", 25);
             Smtp.Credentials = new NetworkCredential("voenkov-alex@yandex.ru", "yatfbpdghuvatpae");
@@ -261,20 +287,44 @@ namespace praktika3
             MailMessage Message = new MailMessage();
             Message.From = new MailAddress("voenkov-alex@yandex.ru", "МГОК");
             Message.To.Add(new MailAddress("voenkova@mgok.pro"));
-            Message.Subject = "Запись к директору";
-            string body = $"Новая запись!\n\n\nИмя: {tbxName.Text}\nФамилия: {tbxSurName.Text}\nОтчество: {tbxDadName.Text}\nГруппа: {tbxGroup.Text}\nДолжность: {tbxPosition.Text}\nТема: {tbxTheame.Text}\nE-mail: {tbxEmail.Text}\nВремя: {dateTimePicker.Value}";
-            Message.Body = body;
-            try
+
+            switch (let)
             {
-                Smtp.Send(Message);
-            }
-            catch (SmtpException ex)
-            {
-                MessageBox.Show(ex.Message);
+                case letter.Create:
+                    {
+                        Message.Subject = "Новая запись к директору";
+                        string body = $"Новая запись на: {dateTimePicker.Value}";
+                        Message.Body = body;
+                        try
+                        {
+                            Smtp.Send(Message);
+                        }
+                        catch (SmtpException ex)
+                        {
+                            MessageBox.Show(ex.Message);
+                        }
+                        break;
+                    }
+
+                case letter.Cancel:
+                    {
+                        Message.Subject = "Запись к директору отменена";
+                        string body = $"Запись на: {dateTimePicker.Value} отменена";
+                        Message.Body = body;
+                        try
+                        {
+                            Smtp.Send(Message);                            
+                        }
+                        catch (SmtpException ex)
+                        {
+                            MessageBox.Show(ex.Message);
+                        }
+                        break;
+                    }
             }
         }
 
-        private void SendMailToUser()
+        private void SendMailToUser(letter let)
         {
             SmtpClient Smtp = new SmtpClient("smtp.yandex.ru", 25);
             Smtp.Credentials = new NetworkCredential("voenkov-alex@yandex.ru", "yatfbpdghuvatpae");
@@ -282,19 +332,56 @@ namespace praktika3
             Smtp.DeliveryMethod = SmtpDeliveryMethod.Network;
             MailMessage Message = new MailMessage();
             Message.From = new MailAddress("voenkov-alex@yandex.ru", "МГОК");
-            Message.To.Add(new MailAddress($"{tbxEmail.Text}"));
-            Message.Subject = "Вы записались к директору";
-            string body = $"Вы записались к директору на: {dateTimePicker.Value}";
-            Message.Body = body;
-            try
+
+
+            if (tbxEmail.Text.Length > 0 && !EmailLegit(tbxEmail.Text))
             {
-                Smtp.Send(Message);
-                MessageBox.Show("Вы были успешно записаны!" + Environment.NewLine + tbxName.Text + " " + tbxSurName.Text + " " + dateTimePicker.Value, "Запись");
-                recordsBox.Items.Add(tbxTheame.Text + " " + dateTimePicker.Value);
+                MessageBox.Show("Вы ввели неправильный email!", "Проверьте введенный email");
+                return;
             }
-            catch (SmtpException ex)
+
+            if (EmailLegit(tbxEmail.Text))
             {
-                MessageBox.Show(ex.Message);
+                Message.To.Add(new MailAddress($"{tbxEmail.Text}"));
+            }
+
+            if (tbxEmail.Text.Length == 0) return;
+
+            switch (let)
+            {
+                case letter.Create:
+                    {
+                        Message.Subject = "Вы записались к директору";
+                        string body = $"Вы записались к директору на: {dateTimePicker.Value}";
+                        Message.Body = body;
+                        try
+                        {
+                            Smtp.Send(Message);
+                            MessageBox.Show("Вы были успешно записаны!" + Environment.NewLine + tbxName.Text + " " + tbxSurName.Text + " " + dateTimePicker.Value, "Запись");
+                        }
+                        catch (SmtpException ex)
+                        {
+                            MessageBox.Show(ex.Message);
+                        }
+                        break;
+                    }
+
+                case letter.Cancel:
+                    {
+                        Message.Subject = "Запись к директору отменена";
+                        string body = $"Вы отменили запись к директору на: {dateTimePicker.Value}";
+                        Message.Body = body;
+                        try
+                        {
+                            Smtp.Send(Message);
+                            MessageBox.Show("Запись отменена!" + Environment.NewLine + tbxName.Text + " " + tbxSurName.Text + " " + dateTimePicker.Value, "Отмена записи");
+                        }
+                        catch (SmtpException ex)
+                        {
+                            MessageBox.Show(ex.Message);
+                        }
+                        break;
+                    }
             }
         }
 
@@ -336,7 +423,12 @@ namespace praktika3
             _isAdmin = isUserAdmin();
             LoadUnsent(); // загрузка с unsent незавершенной анкеты (черновик)
             LoadListBox(); // чтение Meetings и загрузка встреч в recordBox
-            
+            if(_isAdmin)
+            {
+                Submit.Enabled = false;
+                clearForm.Enabled = false;
+                showCanceled.Enabled = true;
+            }
         }
 
         private void Submit_Click(object sender, EventArgs e) // DONE
@@ -360,52 +452,19 @@ namespace praktika3
             }
 
             SaveMeeting();
-        } 
+            RemoveUnsent();
+            SendMailToAdmin(letter.Create);
+            SendMailToUser(letter.Create);
+        }
 
         private void cancelRecord_Click(object sender, EventArgs e) // TODO
         {
-            SmtpClient Smtp = new SmtpClient("smtp.yandex.ru", 25);
-            Smtp.Credentials = new NetworkCredential("voenkov-alex@yandex.ru", "yatfbpdghuvatpae");
-            Smtp.EnableSsl = true;
-            Smtp.DeliveryMethod = SmtpDeliveryMethod.Network;
-            MailMessage Message = new MailMessage();
-            Message.From = new MailAddress("voenkov-alex@yandex.ru");
-            Message.To.Add(new MailAddress("voenkova@mgok.pro")); // TODO отправлять сообщение об отмене записи на логин (емаил) и админу
-            Message.Subject = "Отмена записи";
-            string body = $"Отменить запись\n\n\n {recordsBox.SelectedItem.ToString()}";
-            Message.Body = body;
+            DataRowView rowView = recordsBox.SelectedItem as DataRowView;
 
-            try
-            {
-                Smtp.Send(Message);
-                recordsBox.Items.RemoveAt(recordsBox.SelectedIndex); // TODO добавить в таблицу Meetings флаг отмены
-                MessageBox.Show("Запись успешно отменена!", "Отмена записи");
+            CancelMeeting(Convert.ToInt32(rowView[0]));
 
-                string[] InputFile = File.ReadAllLines(@"savedData.txt");
-                File.Delete(@"savedData.txt");
-
-                int i = 0;
-                bool flag = false;
-                while (i < InputFile.Length)
-                {
-                    if (InputFile[i].Equals(tbxName.Text) && InputFile[i + 1].Equals(tbxSurName.Text) && InputFile[i + 5].Equals(tbxTheame.Text) && !flag)
-                    {
-                        i += 8;
-                        flag = true;
-                        continue;
-                    }
-                    else
-                    {
-                        File.AppendAllText(@"savedData.txt", InputFile[i] + Environment.NewLine);
-                        i++;
-                    }
-
-                }
-            }
-            catch (SmtpException ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
+            SendMailToAdmin(letter.Cancel);
+            SendMailToUser(letter.Cancel);
         }
 
         private void clearForm_Click(object sender, EventArgs e)
@@ -429,7 +488,7 @@ namespace praktika3
         {
             if (recordsBox.SelectedItem != null)
             {                
-                if (recordsBox.SelectedIndex == 0)
+                if (recordsBox.SelectedIndex == 0 && !_isAdmin)
                 {
                     cancelRecord.Enabled = false;
                     cancelRecord.Visible = false;
@@ -445,12 +504,24 @@ namespace praktika3
                     tbxEmail.ReadOnly = false;
                     LoadUnsent();
                 }
-                else
+                if (recordsBox.SelectedIndex != 0 && !_isAdmin)
                 {
                     cancelRecord.Enabled = true;
                     cancelRecord.Visible = true;
                     Submit.Enabled = false;
                     clearForm.Enabled = false;
+                    dateTimePicker.Enabled = false;
+                    DataRowView rowView = recordsBox.SelectedItem as DataRowView;
+                    LoadSentRecord(Convert.ToInt32(rowView[0]));
+                }
+                if(_isAdmin)
+                {
+                    cancelRecord.Enabled = true;
+                    cancelRecord.Visible = true;
+                    Submit.Enabled = false;
+                    Submit.Visible = false;
+                    clearForm.Enabled = false;
+                    clearForm.Visible = false;
                     dateTimePicker.Enabled = false;
                     DataRowView rowView = recordsBox.SelectedItem as DataRowView;
                     LoadSentRecord(Convert.ToInt32(rowView[0]));
@@ -463,6 +534,11 @@ namespace praktika3
             System.Diagnostics.Process.Start("C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe", "https://mgok.mskobr.ru/#/");
         }
 
+        private void showCanceled_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
         private void Appointment_FormClosing(object sender, FormClosingEventArgs e)
         {
             _parentForm.Close();
@@ -472,5 +548,6 @@ namespace praktika3
 
         #endregion Events
 
+        
     }
 }
