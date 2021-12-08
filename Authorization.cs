@@ -9,12 +9,11 @@ using System.IO;
 namespace praktika3
 {
         /* 
-         * 
+         
         --- TODO----
         
         1. Проверка на русские буквы в мыле
         2. Забыли пароль?
-        3. Переход табами
 
         */
 
@@ -24,10 +23,21 @@ namespace praktika3
         SqlConnection connection = new SqlConnection();
         public Authorization()
         {
-            InitializeComponent();
+            InitializeComponent();            
         }
 
         #region Methods
+
+        private void OnlyEnglish(KeyPressEventArgs e)
+        {
+            string Symbol = e.KeyChar.ToString();
+            // \b \u0001
+            if (Regex.Match(Symbol, @"[а-яА-Я]").Success)
+                e.Handled = true;
+
+            if (Symbol == "\u0001")
+                e.Handled = false;
+        }
 
         private void ProceedAppointment(int userID)
         {
@@ -63,11 +73,12 @@ namespace praktika3
             {
                 var users = new DataTable();
                 var getUserID = $"SELECT * FROM users WHERE login='{tbxLogin.Text}'";
-                new SqlDataAdapter(command, connection).Fill(users);
+                new SqlDataAdapter(getUserID, connection).Fill(users);
                 MessageBox.Show("Данные добавлены!");
                 ProceedAppointment(Convert.ToInt32(users.Rows[0][0]));
             }
-            else MessageBox.Show("Ошибка при добавлении данных");
+            else
+                MessageBox.Show("Ошибка при добавлении данных");
         }
 
         private void LogIn()
@@ -149,12 +160,20 @@ namespace praktika3
             }
         }
 
+        private void tbxLogin_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            OnlyEnglish(e);
+        }
+
         private void Authorization_Load(object sender, EventArgs e)
         {
             loggingIn.Top = loggingIn.Top - 50;
 
             this.Height = this.Height - 50;
             DBConnect();
+
+            // testing
+            //ProceedAppointment(1);
         }
 
         #endregion Events        
@@ -199,6 +218,13 @@ namespace praktika3
                 MessageBox.Show("Пароль должен быть от 8 до 16 символов");
                 return false;
             }
+
+            if (tbxPassword.Text.Length > 16)
+            {
+                MessageBox.Show("Пароль должен быть от 8 до 16 символов");
+                return false;
+            }
+
             foreach (var e in tbxPassword.Text)
             {
                 if (!Regex.Match(e.ToString(), @"[0-9]|[a-zA-Z]").Success)
@@ -233,5 +259,7 @@ namespace praktika3
         }
 
         #endregion Checks
+
+        
     }
 }

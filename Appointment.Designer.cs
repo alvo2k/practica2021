@@ -51,10 +51,13 @@ namespace praktika3
             this.records = new System.Windows.Forms.Label();
             this.cancelRecord = new System.Windows.Forms.Button();
             this.backGroundColor = new System.Windows.Forms.Panel();
+            this.logOut = new System.Windows.Forms.Label();
+            this.profile = new System.Windows.Forms.Label();
+            this.showCanceled = new System.Windows.Forms.CheckBox();
+            this.tbxGroup = new System.Windows.Forms.TextBox();
             this.btnWorkingHours = new System.Windows.Forms.Button();
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
             this.recordsBox = new System.Windows.Forms.ListBox();
-            this.tbxGroup = new System.Windows.Forms.TextBox();
             this.backGroundColor.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -66,7 +69,7 @@ namespace praktika3
             this.dateTimePicker.Margin = new System.Windows.Forms.Padding(4);
             this.dateTimePicker.Name = "dateTimePicker";
             this.dateTimePicker.Size = new System.Drawing.Size(213, 31);
-            this.dateTimePicker.TabIndex = 57;
+            this.dateTimePicker.TabIndex = 8;
             this.dateTimePicker.Value = new System.DateTime(2021, 6, 22, 13, 37, 57, 0);
             // 
             // tbxEmail
@@ -75,7 +78,7 @@ namespace praktika3
             this.tbxEmail.Margin = new System.Windows.Forms.Padding(4);
             this.tbxEmail.Name = "tbxEmail";
             this.tbxEmail.Size = new System.Drawing.Size(455, 31);
-            this.tbxEmail.TabIndex = 56;
+            this.tbxEmail.TabIndex = 7;
             this.tbxEmail.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBox7_KeyPress);
             // 
             // tbxTheame
@@ -84,8 +87,7 @@ namespace praktika3
             this.tbxTheame.Margin = new System.Windows.Forms.Padding(4);
             this.tbxTheame.Name = "tbxTheame";
             this.tbxTheame.Size = new System.Drawing.Size(455, 31);
-            this.tbxTheame.TabIndex = 55;
-            this.tbxTheame.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBox6_KeyPress);
+            this.tbxTheame.TabIndex = 6;
             // 
             // tbxPosition
             // 
@@ -93,8 +95,7 @@ namespace praktika3
             this.tbxPosition.Margin = new System.Windows.Forms.Padding(4);
             this.tbxPosition.Name = "tbxPosition";
             this.tbxPosition.Size = new System.Drawing.Size(455, 31);
-            this.tbxPosition.TabIndex = 54;
-            this.tbxPosition.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBox5_KeyPress);
+            this.tbxPosition.TabIndex = 5;
             // 
             // clearForm
             // 
@@ -105,7 +106,7 @@ namespace praktika3
             this.clearForm.Margin = new System.Windows.Forms.Padding(4);
             this.clearForm.Name = "clearForm";
             this.clearForm.Size = new System.Drawing.Size(232, 65);
-            this.clearForm.TabIndex = 53;
+            this.clearForm.TabIndex = 12;
             this.clearForm.Text = "Очистить форму";
             this.clearForm.UseVisualStyleBackColor = false;
             this.clearForm.Click += new System.EventHandler(this.clearForm_Click);
@@ -118,7 +119,7 @@ namespace praktika3
             this.Submit.Margin = new System.Windows.Forms.Padding(4);
             this.Submit.Name = "Submit";
             this.Submit.Size = new System.Drawing.Size(186, 65);
-            this.Submit.TabIndex = 52;
+            this.Submit.TabIndex = 11;
             this.Submit.Text = "Записаться";
             this.Submit.UseVisualStyleBackColor = false;
             this.Submit.Click += new System.EventHandler(this.Submit_Click);
@@ -177,7 +178,7 @@ namespace praktika3
             this.tbxDadName.Margin = new System.Windows.Forms.Padding(4);
             this.tbxDadName.Name = "tbxDadName";
             this.tbxDadName.Size = new System.Drawing.Size(455, 31);
-            this.tbxDadName.TabIndex = 46;
+            this.tbxDadName.TabIndex = 3;
             this.tbxDadName.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBox3_KeyPress);
             // 
             // tbxSurName
@@ -186,7 +187,7 @@ namespace praktika3
             this.tbxSurName.Margin = new System.Windows.Forms.Padding(4);
             this.tbxSurName.Name = "tbxSurName";
             this.tbxSurName.Size = new System.Drawing.Size(455, 31);
-            this.tbxSurName.TabIndex = 45;
+            this.tbxSurName.TabIndex = 2;
             this.tbxSurName.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBox2_KeyPress);
             // 
             // Group
@@ -207,7 +208,7 @@ namespace praktika3
             this.tbxName.Margin = new System.Windows.Forms.Padding(4);
             this.tbxName.Name = "tbxName";
             this.tbxName.Size = new System.Drawing.Size(455, 31);
-            this.tbxName.TabIndex = 43;
+            this.tbxName.TabIndex = 1;
             this.tbxName.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBox1_KeyPress);
             // 
             // Dad
@@ -281,7 +282,7 @@ namespace praktika3
             this.cancelRecord.Margin = new System.Windows.Forms.Padding(2);
             this.cancelRecord.Name = "cancelRecord";
             this.cancelRecord.Size = new System.Drawing.Size(160, 80);
-            this.cancelRecord.TabIndex = 60;
+            this.cancelRecord.TabIndex = 13;
             this.cancelRecord.Text = "Отменить запись";
             this.cancelRecord.UseVisualStyleBackColor = false;
             this.cancelRecord.Visible = false;
@@ -290,6 +291,9 @@ namespace praktika3
             // backGroundColor
             // 
             this.backGroundColor.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(80)))), ((int)(((byte)(126)))), ((int)(((byte)(162)))));
+            this.backGroundColor.Controls.Add(this.logOut);
+            this.backGroundColor.Controls.Add(this.profile);
+            this.backGroundColor.Controls.Add(this.showCanceled);
             this.backGroundColor.Controls.Add(this.tbxGroup);
             this.backGroundColor.Controls.Add(this.btnWorkingHours);
             this.backGroundColor.Controls.Add(this.linkLabel1);
@@ -320,21 +324,73 @@ namespace praktika3
             this.backGroundColor.Size = new System.Drawing.Size(1484, 608);
             this.backGroundColor.TabIndex = 62;
             // 
+            // logOut
+            // 
+            this.logOut.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.logOut.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.logOut.ForeColor = System.Drawing.SystemColors.Control;
+            this.logOut.Image = global::praktika3.Properties.Resources.Logout;
+            this.logOut.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.logOut.Location = new System.Drawing.Point(1310, 73);
+            this.logOut.Name = "logOut";
+            this.logOut.Size = new System.Drawing.Size(140, 28);
+            this.logOut.TabIndex = 66;
+            this.logOut.Text = "Выйти";
+            this.logOut.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.logOut.Click += new System.EventHandler(this.logOut_Click);
+            // 
+            // profile
+            // 
+            this.profile.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.profile.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.profile.ForeColor = System.Drawing.SystemColors.Control;
+            this.profile.Image = global::praktika3.Properties.Resources.profile;
+            this.profile.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.profile.Location = new System.Drawing.Point(1315, 26);
+            this.profile.Name = "profile";
+            this.profile.Size = new System.Drawing.Size(135, 38);
+            this.profile.TabIndex = 65;
+            this.profile.Text = "Профиль";
+            this.profile.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.profile.Click += new System.EventHandler(this.profile_Click);
+            // 
+            // showCanceled
+            // 
+            this.showCanceled.AutoSize = true;
+            this.showCanceled.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.showCanceled.ForeColor = System.Drawing.SystemColors.Control;
+            this.showCanceled.Location = new System.Drawing.Point(1107, 447);
+            this.showCanceled.Name = "showCanceled";
+            this.showCanceled.Size = new System.Drawing.Size(343, 32);
+            this.showCanceled.TabIndex = 10;
+            this.showCanceled.Text = "Показывать отмененные встречи";
+            this.showCanceled.UseVisualStyleBackColor = true;
+            this.showCanceled.CheckedChanged += new System.EventHandler(this.showCanceled_CheckedChanged);
+            // 
+            // tbxGroup
+            // 
+            this.tbxGroup.Location = new System.Drawing.Point(195, 382);
+            this.tbxGroup.Name = "tbxGroup";
+            this.tbxGroup.Size = new System.Drawing.Size(455, 31);
+            this.tbxGroup.TabIndex = 4;
+            // 
             // btnWorkingHours
             // 
             this.btnWorkingHours.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(80)))), ((int)(((byte)(126)))), ((int)(((byte)(182)))));
+            this.btnWorkingHours.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnWorkingHours.ForeColor = System.Drawing.SystemColors.Control;
             this.btnWorkingHours.Location = new System.Drawing.Point(1146, 379);
             this.btnWorkingHours.Margin = new System.Windows.Forms.Padding(4);
             this.btnWorkingHours.Name = "btnWorkingHours";
             this.btnWorkingHours.Size = new System.Drawing.Size(234, 32);
-            this.btnWorkingHours.TabIndex = 65;
+            this.btnWorkingHours.TabIndex = 9;
             this.btnWorkingHours.Text = "Время работы";
             this.btnWorkingHours.UseVisualStyleBackColor = false;
             this.btnWorkingHours.Click += new System.EventHandler(this.workingHours_Click);
             // 
             // linkLabel1
             // 
+            this.linkLabel1.Cursor = System.Windows.Forms.Cursors.Hand;
             this.linkLabel1.Image = global::praktika3.Properties.Resources.logo;
             this.linkLabel1.Location = new System.Drawing.Point(44, 34);
             this.linkLabel1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
@@ -354,13 +410,6 @@ namespace praktika3
             this.recordsBox.Size = new System.Drawing.Size(565, 79);
             this.recordsBox.TabIndex = 63;
             this.recordsBox.SelectedIndexChanged += new System.EventHandler(this.recordsBox_SelectedIndexChanged);
-            // 
-            // tbxGroup
-            // 
-            this.tbxGroup.Location = new System.Drawing.Point(195, 382);
-            this.tbxGroup.Name = "tbxGroup";
-            this.tbxGroup.Size = new System.Drawing.Size(455, 31);
-            this.tbxGroup.TabIndex = 66;
             // 
             // Appointment
             // 
@@ -411,6 +460,9 @@ namespace praktika3
         private System.Windows.Forms.LinkLabel linkLabel1;
         private System.Windows.Forms.Button btnWorkingHours;
         private System.Windows.Forms.TextBox tbxGroup;
+        private System.Windows.Forms.CheckBox showCanceled;
+        private System.Windows.Forms.Label logOut;
+        private System.Windows.Forms.Label profile;
     }
 }
 
