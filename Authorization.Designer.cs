@@ -57,14 +57,16 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(80)))), ((int)(((byte)(126)))), ((int)(((byte)(162)))));
             this.groupBox1.Controls.Add(this.singup);
             this.groupBox1.Controls.Add(this.singin);
-            this.groupBox1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.groupBox1.Location = new System.Drawing.Point(0, 0);
+            this.groupBox1.ForeColor = System.Drawing.SystemColors.Control;
+            this.groupBox1.Location = new System.Drawing.Point(12, 12);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(631, 117);
+            this.groupBox1.Size = new System.Drawing.Size(607, 105);
             this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Выберите вариант авторизации";
             // 
             // singup
             // 
@@ -89,6 +91,7 @@
             // lblLogin
             // 
             this.lblLogin.AutoSize = true;
+            this.lblLogin.BackColor = System.Drawing.Color.White;
             this.lblLogin.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.lblLogin.Location = new System.Drawing.Point(12, 150);
             this.lblLogin.Name = "lblLogin";
@@ -108,6 +111,7 @@
             // lblPassword
             // 
             this.lblPassword.AutoSize = true;
+            this.lblPassword.BackColor = System.Drawing.Color.White;
             this.lblPassword.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.lblPassword.Location = new System.Drawing.Point(12, 200);
             this.lblPassword.Name = "lblPassword";
@@ -128,6 +132,7 @@
             // lblPassword2
             // 
             this.lblPassword2.AutoSize = true;
+            this.lblPassword2.BackColor = System.Drawing.Color.White;
             this.lblPassword2.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.lblPassword2.Location = new System.Drawing.Point(12, 250);
             this.lblPassword2.Name = "lblPassword2";
@@ -138,19 +143,22 @@
             // 
             // loggingIn
             // 
+            this.loggingIn.BackColor = System.Drawing.Color.Lime;
             this.loggingIn.Location = new System.Drawing.Point(481, 303);
             this.loggingIn.Name = "loggingIn";
             this.loggingIn.Size = new System.Drawing.Size(138, 34);
             this.loggingIn.TabIndex = 5;
             this.loggingIn.Text = "Продолжить";
-            this.loggingIn.UseVisualStyleBackColor = true;
+            this.loggingIn.UseVisualStyleBackColor = false;
             this.loggingIn.Click += new System.EventHandler(this.loggingIn_Click);
             // 
             // instructions
             // 
+            this.instructions.BackColor = System.Drawing.Color.White;
+            this.instructions.ForeColor = System.Drawing.SystemColors.ControlText;
             this.instructions.Location = new System.Drawing.Point(14, 290);
             this.instructions.Name = "instructions";
-            this.instructions.Size = new System.Drawing.Size(457, 72);
+            this.instructions.Size = new System.Drawing.Size(457, 79);
             this.instructions.TabIndex = 5;
             this.instructions.Text = "Для логина используйте почту МГОК\'а\r\nПароль должен состоять из латинских букв и ц" +
     "ифр.\r\nОт 8 до 16 символов";
@@ -161,6 +169,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.BackgroundImage = global::praktika3.Properties.Resources.fon21;
             this.ClientSize = new System.Drawing.Size(631, 371);
             this.Controls.Add(this.instructions);
             this.Controls.Add(this.loggingIn);
