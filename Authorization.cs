@@ -218,6 +218,13 @@ namespace praktika3
                 MessageBox.Show("Пароль должен быть от 8 до 16 символов");
                 return false;
             }
+
+            if (tbxPassword.Text.Length > 16)
+            {
+                MessageBox.Show("Пароль должен быть от 8 до 16 символов");
+                return false;
+            }
+
             foreach (var e in tbxPassword.Text)
             {
                 if (!Regex.Match(e.ToString(), @"[0-9]|[a-zA-Z]").Success)

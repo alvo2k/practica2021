@@ -51,13 +51,13 @@ namespace praktika3
             this.records = new System.Windows.Forms.Label();
             this.cancelRecord = new System.Windows.Forms.Button();
             this.backGroundColor = new System.Windows.Forms.Panel();
+            this.logOut = new System.Windows.Forms.Label();
+            this.profile = new System.Windows.Forms.Label();
             this.showCanceled = new System.Windows.Forms.CheckBox();
             this.tbxGroup = new System.Windows.Forms.TextBox();
             this.btnWorkingHours = new System.Windows.Forms.Button();
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
             this.recordsBox = new System.Windows.Forms.ListBox();
-            this.profile = new System.Windows.Forms.Label();
-            this.logOut = new System.Windows.Forms.Label();
             this.backGroundColor.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -324,6 +324,36 @@ namespace praktika3
             this.backGroundColor.Size = new System.Drawing.Size(1484, 608);
             this.backGroundColor.TabIndex = 62;
             // 
+            // logOut
+            // 
+            this.logOut.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.logOut.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.logOut.ForeColor = System.Drawing.SystemColors.Control;
+            this.logOut.Image = global::praktika3.Properties.Resources.Logout;
+            this.logOut.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.logOut.Location = new System.Drawing.Point(1310, 73);
+            this.logOut.Name = "logOut";
+            this.logOut.Size = new System.Drawing.Size(140, 28);
+            this.logOut.TabIndex = 66;
+            this.logOut.Text = "Выйти";
+            this.logOut.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.logOut.Click += new System.EventHandler(this.logOut_Click);
+            // 
+            // profile
+            // 
+            this.profile.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.profile.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.profile.ForeColor = System.Drawing.SystemColors.Control;
+            this.profile.Image = global::praktika3.Properties.Resources.profile;
+            this.profile.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.profile.Location = new System.Drawing.Point(1315, 26);
+            this.profile.Name = "profile";
+            this.profile.Size = new System.Drawing.Size(135, 38);
+            this.profile.TabIndex = 65;
+            this.profile.Text = "Профиль";
+            this.profile.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.profile.Click += new System.EventHandler(this.profile_Click);
+            // 
             // showCanceled
             // 
             this.showCanceled.AutoSize = true;
@@ -380,35 +410,6 @@ namespace praktika3
             this.recordsBox.Size = new System.Drawing.Size(565, 79);
             this.recordsBox.TabIndex = 63;
             this.recordsBox.SelectedIndexChanged += new System.EventHandler(this.recordsBox_SelectedIndexChanged);
-            // 
-            // profile
-            // 
-            this.profile.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.profile.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.profile.ForeColor = System.Drawing.SystemColors.Control;
-            this.profile.Image = global::praktika3.Properties.Resources.profile;
-            this.profile.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.profile.Location = new System.Drawing.Point(1315, 26);
-            this.profile.Name = "profile";
-            this.profile.Size = new System.Drawing.Size(135, 38);
-            this.profile.TabIndex = 65;
-            this.profile.Text = "Профиль";
-            this.profile.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // logOut
-            // 
-            this.logOut.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.logOut.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.logOut.ForeColor = System.Drawing.SystemColors.Control;
-            this.logOut.Image = global::praktika3.Properties.Resources.Logout;
-            this.logOut.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.logOut.Location = new System.Drawing.Point(1310, 73);
-            this.logOut.Name = "logOut";
-            this.logOut.Size = new System.Drawing.Size(140, 28);
-            this.logOut.TabIndex = 66;
-            this.logOut.Text = "Выйти";
-            this.logOut.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.logOut.Click += new System.EventHandler(this.logOut_Click);
             // 
             // Appointment
             // 

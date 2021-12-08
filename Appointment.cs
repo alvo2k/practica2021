@@ -557,12 +557,19 @@ namespace praktika3
             auth.Show();
         }
 
+        private void profile_Click(object sender, EventArgs e)
+        {
+            Profile profile = new Profile(this.Left, this.Top, this.Height, this.Width, _userID, _connection);
+            profile.Show();
+        }
+
         private void Appointment_FormClosing(object sender, FormClosingEventArgs e)
         {
             _parentForm.Close();
             SaveUnsent();
             _connection.Dispose();
         }
+
 
 
 
