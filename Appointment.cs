@@ -550,12 +550,20 @@ namespace praktika3
             LoadListBox();
         }
 
+        private void logOut_Click(object sender, EventArgs e)
+        {
+            this.SetVisibleCore(false);
+            Authorization auth = new Authorization();
+            auth.Show();
+        }
+
         private void Appointment_FormClosing(object sender, FormClosingEventArgs e)
         {
             _parentForm.Close();
             SaveUnsent();
             _connection.Dispose();
         }
+
 
 
         #endregion Events

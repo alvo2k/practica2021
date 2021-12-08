@@ -73,11 +73,12 @@ namespace praktika3
             {
                 var users = new DataTable();
                 var getUserID = $"SELECT * FROM users WHERE login='{tbxLogin.Text}'";
-                new SqlDataAdapter(command, connection).Fill(users);
+                new SqlDataAdapter(getUserID, connection).Fill(users);
                 MessageBox.Show("Данные добавлены!");
                 ProceedAppointment(Convert.ToInt32(users.Rows[0][0]));
             }
-            else MessageBox.Show("Ошибка при добавлении данных");
+            else
+                MessageBox.Show("Ошибка при добавлении данных");
         }
 
         private void LogIn()

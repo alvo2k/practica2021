@@ -56,6 +56,8 @@ namespace praktika3
             this.btnWorkingHours = new System.Windows.Forms.Button();
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
             this.recordsBox = new System.Windows.Forms.ListBox();
+            this.profile = new System.Windows.Forms.Label();
+            this.logOut = new System.Windows.Forms.Label();
             this.backGroundColor.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -289,6 +291,8 @@ namespace praktika3
             // backGroundColor
             // 
             this.backGroundColor.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(80)))), ((int)(((byte)(126)))), ((int)(((byte)(162)))));
+            this.backGroundColor.Controls.Add(this.logOut);
+            this.backGroundColor.Controls.Add(this.profile);
             this.backGroundColor.Controls.Add(this.showCanceled);
             this.backGroundColor.Controls.Add(this.tbxGroup);
             this.backGroundColor.Controls.Add(this.btnWorkingHours);
@@ -343,6 +347,7 @@ namespace praktika3
             // btnWorkingHours
             // 
             this.btnWorkingHours.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(80)))), ((int)(((byte)(126)))), ((int)(((byte)(182)))));
+            this.btnWorkingHours.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnWorkingHours.ForeColor = System.Drawing.SystemColors.Control;
             this.btnWorkingHours.Location = new System.Drawing.Point(1146, 379);
             this.btnWorkingHours.Margin = new System.Windows.Forms.Padding(4);
@@ -355,6 +360,7 @@ namespace praktika3
             // 
             // linkLabel1
             // 
+            this.linkLabel1.Cursor = System.Windows.Forms.Cursors.Hand;
             this.linkLabel1.Image = global::praktika3.Properties.Resources.logo;
             this.linkLabel1.Location = new System.Drawing.Point(44, 34);
             this.linkLabel1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
@@ -374,6 +380,35 @@ namespace praktika3
             this.recordsBox.Size = new System.Drawing.Size(565, 79);
             this.recordsBox.TabIndex = 63;
             this.recordsBox.SelectedIndexChanged += new System.EventHandler(this.recordsBox_SelectedIndexChanged);
+            // 
+            // profile
+            // 
+            this.profile.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.profile.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.profile.ForeColor = System.Drawing.SystemColors.Control;
+            this.profile.Image = global::praktika3.Properties.Resources.profile;
+            this.profile.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.profile.Location = new System.Drawing.Point(1315, 26);
+            this.profile.Name = "profile";
+            this.profile.Size = new System.Drawing.Size(135, 38);
+            this.profile.TabIndex = 65;
+            this.profile.Text = "Профиль";
+            this.profile.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // logOut
+            // 
+            this.logOut.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.logOut.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.logOut.ForeColor = System.Drawing.SystemColors.Control;
+            this.logOut.Image = global::praktika3.Properties.Resources.Logout;
+            this.logOut.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.logOut.Location = new System.Drawing.Point(1310, 73);
+            this.logOut.Name = "logOut";
+            this.logOut.Size = new System.Drawing.Size(140, 28);
+            this.logOut.TabIndex = 66;
+            this.logOut.Text = "Выйти";
+            this.logOut.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.logOut.Click += new System.EventHandler(this.logOut_Click);
             // 
             // Appointment
             // 
@@ -425,6 +460,8 @@ namespace praktika3
         private System.Windows.Forms.Button btnWorkingHours;
         private System.Windows.Forms.TextBox tbxGroup;
         private System.Windows.Forms.CheckBox showCanceled;
+        private System.Windows.Forms.Label logOut;
+        private System.Windows.Forms.Label profile;
     }
 }
 
