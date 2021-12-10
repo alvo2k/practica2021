@@ -120,31 +120,61 @@ namespace praktika3
 
         private void LoadSentRecord(int idMeeting) // DONE чтение из Meetings и запись в textbox`ы readonly
         {
-            var selectedMeeting = new DataTable();
-            if (_connection.State != ConnectionState.Open) _connection.Open();
-            var command = $"SELECT * FROM Meetings WHERE idMeeting='{idMeeting}'";
-            new SqlDataAdapter(command, _connection).Fill(selectedMeeting);
-
-            tbxName.Text = selectedMeeting.Rows[0]["name"].ToString();
-            tbxName.ReadOnly = true;
-            tbxSurName.Text = selectedMeeting.Rows[0]["surname"].ToString();
-            tbxSurName.ReadOnly = true;
-            tbxDadName.Text = selectedMeeting.Rows[0]["middle_name"].ToString();
-            tbxDadName.ReadOnly = true;
-            tbxGroup.Text = selectedMeeting.Rows[0]["groupp"].ToString();
-            tbxGroup.ReadOnly = true;
-            tbxPosition.Text = selectedMeeting.Rows[0]["position"].ToString();
-            tbxPosition.ReadOnly = true;
-            tbxTheame.Text = selectedMeeting.Rows[0]["theame"].ToString();
-            tbxTheame.ReadOnly = true;
-            tbxEmail.Text = selectedMeeting.Rows[0]["email"].ToString();
-            tbxEmail.ReadOnly = true;
-            try
+            if (!showCanceled.Checked)
             {
-                dateTimePicker.Value = DateTime.Parse(selectedMeeting.Rows[0]["date_time"].ToString());
-            }
-            catch (Exception ex) { }
+                var selectedMeeting = new DataTable();
+                if (_connection.State != ConnectionState.Open) _connection.Open();
+                var command = $"SELECT * FROM Meetings WHERE idMeeting='{idMeeting}'";
+                new SqlDataAdapter(command, _connection).Fill(selectedMeeting);
 
+                tbxName.Text = selectedMeeting.Rows[0]["name"].ToString();
+                tbxName.ReadOnly = true;
+                tbxSurName.Text = selectedMeeting.Rows[0]["surname"].ToString();
+                tbxSurName.ReadOnly = true;
+                tbxDadName.Text = selectedMeeting.Rows[0]["middle_name"].ToString();
+                tbxDadName.ReadOnly = true;
+                tbxGroup.Text = selectedMeeting.Rows[0]["groupp"].ToString();
+                tbxGroup.ReadOnly = true;
+                tbxPosition.Text = selectedMeeting.Rows[0]["position"].ToString();
+                tbxPosition.ReadOnly = true;
+                tbxTheame.Text = selectedMeeting.Rows[0]["theame"].ToString();
+                tbxTheame.ReadOnly = true;
+                tbxEmail.Text = selectedMeeting.Rows[0]["email"].ToString();
+                tbxEmail.ReadOnly = true;
+                try
+                {
+                    dateTimePicker.Value = DateTime.Parse(selectedMeeting.Rows[0]["date_time"].ToString());
+                }
+                catch { }
+            }
+
+            else
+            {
+                var selectedMeeting = new DataTable();
+                if (_connection.State != ConnectionState.Open) _connection.Open();
+                var command = $"SELECT * FROM outdated WHERE idMeeting='{idMeeting}'";
+                new SqlDataAdapter(command, _connection).Fill(selectedMeeting);
+
+                tbxName.Text = selectedMeeting.Rows[0]["name"].ToString();
+                tbxName.ReadOnly = true;
+                tbxSurName.Text = selectedMeeting.Rows[0]["surname"].ToString();
+                tbxSurName.ReadOnly = true;
+                tbxDadName.Text = selectedMeeting.Rows[0]["middle_name"].ToString();
+                tbxDadName.ReadOnly = true;
+                tbxGroup.Text = selectedMeeting.Rows[0]["groupp"].ToString();
+                tbxGroup.ReadOnly = true;
+                tbxPosition.Text = selectedMeeting.Rows[0]["position"].ToString();
+                tbxPosition.ReadOnly = true;
+                tbxTheame.Text = selectedMeeting.Rows[0]["theame"].ToString();
+                tbxTheame.ReadOnly = true;
+                tbxEmail.Text = selectedMeeting.Rows[0]["email"].ToString();
+                tbxEmail.ReadOnly = true;
+                try
+                {
+                    dateTimePicker.Value = DateTime.Parse(selectedMeeting.Rows[0]["date_time"].ToString());
+                }
+                catch { }
+            }
             //if (DateTime.Parse(lines[(index - 1) * 8 + 7]) > DateTime.Now) зачем??
             //    dateTimePicker.Value = DateTime.Parse(lines[(index - 1) * 8 + 7]);
         }
@@ -182,8 +212,8 @@ namespace praktika3
             {
                 string command;
 
-                if (showCanceled.Checked) command = $"SELECT * FROM Meetings";
-                else command = $"SELECT * FROM Meetings WHERE canceled=0";
+                if (showCanceled.Checked) command = $"SELECT * FROM outdated";
+                else command = $"SELECT * FROM Meetings";
 
                 new SqlDataAdapter(command, _connection).Fill(meetings);
 
@@ -202,7 +232,7 @@ namespace praktika3
             }
             else
             {
-                var command = $"SELECT * FROM Meetings WHERE userID='{_userID}' AND canceled=0";
+                var command = $"SELECT * FROM Meetings WHERE userID='{_userID}'";
                 new SqlDataAdapter(command, _connection).Fill(meetings);               
 
                 var source = new DataTable();
@@ -273,10 +303,31 @@ namespace praktika3
         private void CancelMeeting(int idMeeting)
         {
             if (_connection.State != ConnectionState.Open) _connection.Open();
-            var command = $"UPDATE Meetings SET canceled = 1 WHERE idMeeting='{idMeeting}'";
 
-            var cmd = new SqlCommand(command, _connection);
+            // select meeting
+            var selectedMeeting = new DataTable();
+            var getMeeting = $"SELECT IdMeeting, name, surname, middle_name, groupp, position, theame, email, date_time, userID FROM Meetings WHERE IdMeeting='{idMeeting}'";
+            new SqlDataAdapter(getMeeting, _connection).Fill(selectedMeeting);
+
+            // add outdated meeting
+            var addOutdatedMeeting = $"INSERT INTO outdated (IdMeeting, name, surname, middle_name, groupp, position, theame, email, date_time, userID) VALUES (@IdMeeting, @name, @surname, @middle_name, @group, @position, @theame, @email, @date_time, @userid)";
+            var cmd = new SqlCommand(addOutdatedMeeting, _connection);
+            cmd.Parameters.Add("@IdMeeting", SqlDbType.NVarChar).Value = selectedMeeting.Rows[0]["IdMeeting"];
+            cmd.Parameters.Add("@name", SqlDbType.NVarChar).Value = selectedMeeting.Rows[0]["name"];
+            cmd.Parameters.Add("@surname", SqlDbType.NVarChar).Value = selectedMeeting.Rows[0]["surname"];
+            cmd.Parameters.Add("@middle_name", SqlDbType.NVarChar).Value = selectedMeeting.Rows[0]["middle_name"];
+            cmd.Parameters.Add("@group", SqlDbType.NVarChar).Value = selectedMeeting.Rows[0]["groupp"];
+            cmd.Parameters.Add("@position", SqlDbType.NVarChar).Value = selectedMeeting.Rows[0]["position"];
+            cmd.Parameters.Add("@theame", SqlDbType.NVarChar).Value = selectedMeeting.Rows[0]["theame"];
+            cmd.Parameters.Add("@email", SqlDbType.NVarChar).Value = selectedMeeting.Rows[0]["email"];
+            cmd.Parameters.Add("@date_time", SqlDbType.DateTime).Value = selectedMeeting.Rows[0]["date_time"].ToString();
+            cmd.Parameters.Add("@userid", SqlDbType.Int).Value = _userID;
+
             cmd.ExecuteNonQuery();
+
+            // deleate outdated meeting from meetings
+            var commandDeleate = $"DELETE FROM Meetings WHERE idMeeting='{idMeeting}'";
+            new SqlCommand(commandDeleate, _connection).ExecuteNonQuery();
 
             LoadListBox(); // update
         }
@@ -284,7 +335,7 @@ namespace praktika3
         private void RemoveUnsent() // после отправки формы удалить черновик
         {
             if (_connection.State != ConnectionState.Open) _connection.Open();
-            var clear = "DELETE * FROM unsent";
+            var clear = "DELETE FROM unsent";
             new SqlCommand(clear, _connection).ExecuteNonQuery();
         }
 
@@ -525,10 +576,20 @@ namespace praktika3
                     DataRowView rowView = recordsBox.SelectedItem as DataRowView;
                     LoadSentRecord(Convert.ToInt32(rowView[0]));
                 }
-                if(_isAdmin)
+                if(_isAdmin && !showCanceled.Checked)
                 {
                     cancelRecord.Enabled = true;
                     cancelRecord.Visible = true;
+                    Submit.Enabled = false;
+                    Submit.Visible = false;
+                    clearForm.Enabled = false;
+                    clearForm.Visible = false;
+                    dateTimePicker.Enabled = false;
+                    DataRowView rowView = recordsBox.SelectedItem as DataRowView;
+                    LoadSentRecord(Convert.ToInt32(rowView[0]));
+                }
+                if (_isAdmin && showCanceled.Checked)
+                {
                     Submit.Enabled = false;
                     Submit.Visible = false;
                     clearForm.Enabled = false;
@@ -548,6 +609,18 @@ namespace praktika3
         private void showCanceled_CheckedChanged(object sender, EventArgs e)
         {
             LoadListBox();
+
+            if (showCanceled.Checked)
+            {
+                cancelRecord.Enabled = false;
+                cancelRecord.Visible = false;
+            }
+            
+            else
+            {
+                cancelRecord.Enabled = true;
+                cancelRecord.Visible = true;
+            }
         }
 
         private void logOut_Click(object sender, EventArgs e)
