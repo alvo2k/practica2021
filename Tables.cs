@@ -245,7 +245,54 @@ namespace praktika3
 
         private void btnDeleate_Click(object sender, EventArgs e)
         {
+            if (dataGridView1.SelectedRows.Count > 0)
+            {
+                if (_connection.State != ConnectionState.Open) _connection.Open();
 
+                if (activeTabel == "Meetings" || activeTabel == "outdated")
+                {
+                    for (int i = 0; i < dataGridView1.SelectedRows.Count; i++)
+                    {
+                        var command = $"DELETE FROM {activeTabel} WHERE IdMeeting = {dataGridView1.SelectedRows[i].Cells["IdMeeting"].Value}";
+
+                        var cmd = new SqlCommand(command, _connection);
+                        try
+                        {
+                            cmd.ExecuteNonQuery();
+                            MessageBox.Show("Строка успешно удалена!", "Успешно");
+                            LoadData(activeTabel);
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show(ex.ToString());
+                        }
+                    }
+                }
+                if (activeTabel == "users")
+                {
+                    for (int i = 0; i < dataGridView1.SelectedRows.Count; i++)
+                    {
+                        var command = $"DELETE FROM {activeTabel} WHERE IdMeeting = {dataGridView1.SelectedRows[i].Cells["IdMeeting"].Value}";
+
+                        var cmd = new SqlCommand(command, _connection);
+
+                        try
+                        {
+                            cmd.ExecuteNonQuery();
+                            MessageBox.Show("Строка успешно удалена!", "Успешно");
+                            LoadData(activeTabel);
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show(ex.ToString());
+                        }
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show("Выберите строки для удаления!");
+            }
         }
     }
 }
