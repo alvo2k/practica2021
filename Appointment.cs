@@ -284,7 +284,7 @@ namespace praktika3
         private void RemoveUnsent() // после отправки формы удалить черновик
         {
             if (_connection.State != ConnectionState.Open) _connection.Open();
-            var clear = "DELETE FROM unsent";
+            var clear = "DELETE * FROM unsent";
             new SqlCommand(clear, _connection).ExecuteNonQuery();
         }
 
@@ -563,15 +563,18 @@ namespace praktika3
             profile.Show();
         }
 
+        private void lblDataBase_Click(object sender, EventArgs e)
+        {
+            Tables tbx = new Tables(this.Left, this.Top, this.Height, this.Width, _userID, _connection);
+            tbx.Show();
+        }
+
         private void Appointment_FormClosing(object sender, FormClosingEventArgs e)
         {
             _parentForm.Close();
             SaveUnsent();
             _connection.Dispose();
         }
-
-
-
 
         #endregion Events
 
