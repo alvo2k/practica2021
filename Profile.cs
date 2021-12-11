@@ -44,7 +44,6 @@ namespace praktika3
         private void OnlyLetters(KeyPressEventArgs e)
         {
             string Symbol = e.KeyChar.ToString();
-            // \b \u0001
             if (!Regex.Match(Symbol, @"[а-яА-Я]").Success)
                 e.Handled = true;
 

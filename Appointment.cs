@@ -23,8 +23,7 @@ namespace praktika3
         
         public Appointment(Authorization parent, SqlConnection connection, int userID)
         {
-            InitializeComponent();      
-            // для закрытия процесса родительской формы в formclosing
+            InitializeComponent();
             _parentForm = parent;
             _connection = connection;
             _userID = userID;            
@@ -36,7 +35,6 @@ namespace praktika3
         private void OnlyLetters(KeyPressEventArgs e)
         {
             string Symbol = e.KeyChar.ToString();
-            // \b \u0001
             if (!Regex.Match(Symbol, @"[а-яА-Я]|[a-zA-Z]").Success)
                 e.Handled = true;
             
@@ -47,7 +45,6 @@ namespace praktika3
         private void OnlyEnglish(KeyPressEventArgs e)
         {
             string Symbol = e.KeyChar.ToString();
-            // \b \u0001
             if (Regex.Match(Symbol, @"[а-яА-Я]").Success)
                 e.Handled = true;
 
@@ -60,7 +57,6 @@ namespace praktika3
             try
             {
                 MailAddress ma = new MailAddress(email);
-
                 return true;
             }
             catch
@@ -82,7 +78,7 @@ namespace praktika3
                 return true;
             }
 
-            return true; // testing false
+            return false;
         }
 
         private bool isUserAdmin()
@@ -103,7 +99,7 @@ namespace praktika3
 
         #region Save/Load
 
-        private void LoadSentRecord(int idMeeting) // DONE чтение из Meetings и запись в textbox`ы readonly
+        private void LoadSentRecord(int idMeeting)
         {
             if (!showCanceled.Checked)
             {
@@ -160,11 +156,9 @@ namespace praktika3
                 }
                 catch { }
             }
-            //if (DateTime.Parse(lines[(index - 1) * 8 + 7]) > DateTime.Now) зачем??
-            //    dateTimePicker.Value = DateTime.Parse(lines[(index - 1) * 8 + 7]);
         }
 
-        private void LoadUnsent() // DONE получение данных из таблицы unsent и запись значений в textbox`ы 
+        private void LoadUnsent()
         {
             if (_connection.State != ConnectionState.Open) _connection.Open();
             var command = $"SELECT * FROM unsent";
@@ -187,7 +181,7 @@ namespace praktika3
             catch { }
         }
 
-        private void LoadListBox() // DONE загрузка встреч с Meetings в поля recordbox. Для админа все записи, для пользователя только его
+        private void LoadListBox()
         {
             if (_connection.State != ConnectionState.Open) _connection.Open();
 
@@ -208,7 +202,7 @@ namespace praktika3
 
                 for (int q = 0; q < meetings.Rows.Count; q++)
                 {
-                    source.Rows.Add(meetings.Rows[q]["IdMeeting"], $"{meetings.Rows[q]["theame"]} {meetings.Rows[q]["date_time"]}"); // idMeeting, тема и время                                                                             
+                    source.Rows.Add(meetings.Rows[q]["IdMeeting"], $"{meetings.Rows[q]["theame"]} {meetings.Rows[q]["date_time"]}");                                                                             
                 }
 
                 recordsBox.ValueMember = "idMeeting";
@@ -230,7 +224,7 @@ namespace praktika3
                 {
                     for (int q = 0; q < meetings.Rows.Count; q++)
                     {
-                        source.Rows.Add(meetings.Rows[q][0], $"{meetings.Rows[q][6]} {meetings.Rows[q][8]}"); // idMeeting, тема и время                                                                             
+                        source.Rows.Add(meetings.Rows[q][0], $"{meetings.Rows[q][6]} {meetings.Rows[q][8]}");                                                                             
                     }
                 }
                 recordsBox.ValueMember = "idMeeting";
@@ -239,11 +233,10 @@ namespace praktika3
             }
         }
 
-        private void SaveUnsent() // DONE при закрытии формы запись данных из полей tbx в таблицу unsent
+        private void SaveUnsent()
         {
             if (_connection.State != ConnectionState.Open) _connection.Open();
 
-            // очистка таблицы, чтобы всегда была только одна запись
             var clear = "DELETE FROM unsent";
             new SqlCommand(clear, _connection).ExecuteNonQuery();
 
@@ -263,7 +256,7 @@ namespace praktika3
             cmd.ExecuteNonQuery();
         }
 
-        private void SaveMeeting() // при нажатии отправки отправляется письмо и запрос в Meetings
+        private void SaveMeeting()
         {
             if (_connection.State != ConnectionState.Open) _connection.Open();
             var command = $"INSERT INTO Meetings (name, surname, middle_name, groupp, position, theame, email, date_time, userID) VALUES (@name, @surname, @middle_name, @group, @position, @theame, @email, @date_time, @userid)";
@@ -281,7 +274,7 @@ namespace praktika3
 
             cmd.ExecuteNonQuery();
 
-            LoadListBox(); // update
+            LoadListBox();
             recordsBox.SelectedIndex = recordsBox.Items.Count - 1;
         }
 
@@ -289,12 +282,10 @@ namespace praktika3
         {
             if (_connection.State != ConnectionState.Open) _connection.Open();
 
-            // select meeting
             var selectedMeeting = new DataTable();
             var getMeeting = $"SELECT IdMeeting, name, surname, middle_name, groupp, position, theame, email, date_time, userID FROM Meetings WHERE IdMeeting='{idMeeting}'";
             new SqlDataAdapter(getMeeting, _connection).Fill(selectedMeeting);
 
-            // add outdated meeting
             var addOutdatedMeeting = $"INSERT INTO outdated (IdMeeting, name, surname, middle_name, groupp, position, theame, email, date_time, userID) VALUES (@IdMeeting, @name, @surname, @middle_name, @group, @position, @theame, @email, @date_time, @userid)";
             var cmd = new SqlCommand(addOutdatedMeeting, _connection);
             cmd.Parameters.Add("@IdMeeting", SqlDbType.NVarChar).Value = selectedMeeting.Rows[0]["IdMeeting"];
@@ -310,14 +301,13 @@ namespace praktika3
 
             cmd.ExecuteNonQuery();
 
-            // deleate outdated meeting from meetings
             var commandDeleate = $"DELETE FROM Meetings WHERE idMeeting='{idMeeting}'";
             new SqlCommand(commandDeleate, _connection).ExecuteNonQuery();
 
             LoadListBox(); // update
         }
 
-        private void RemoveUnsent() // после отправки формы удалить черновик
+        private void RemoveUnsent()
         {
             if (_connection.State != ConnectionState.Open) _connection.Open();
             var clear = "DELETE FROM unsent";
@@ -469,8 +459,8 @@ namespace praktika3
             dateTimePicker.MaxDate = dateTimePicker.Value.AddDays(45);
 
             _isAdmin = isUserAdmin();
-            LoadUnsent(); // загрузка с unsent незавершенной анкеты (черновик)
-            LoadListBox(); // чтение Meetings и загрузка встреч в recordBox
+            LoadUnsent();
+            LoadListBox();
             if(!_isAdmin)
             {
                 showCanceled.Enabled = false;
@@ -480,7 +470,7 @@ namespace praktika3
             }
         }
 
-        private void Submit_Click(object sender, EventArgs e) // DONE
+        private void Submit_Click(object sender, EventArgs e)
         {
             if (!IsHasFreeTime())
             {
@@ -506,7 +496,7 @@ namespace praktika3
             SendMailToUser(letter.Create);
         }
 
-        private void cancelRecord_Click(object sender, EventArgs e) // TODO
+        private void cancelRecord_Click(object sender, EventArgs e)
         {
             DataRowView rowView = recordsBox.SelectedItem as DataRowView;
 

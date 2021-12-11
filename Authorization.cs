@@ -8,18 +8,8 @@ using System.IO;
 
 namespace praktika3
 {
-        /* 
-         
-        --- TODO----
-        
-        1. Проверка на русские буквы в мыле
-        2. Забыли пароль?
-
-        */
-
     public partial class Authorization : Form
     {
-        // строка подключения и само подключение в методе DBConnect
         SqlConnection connection = new SqlConnection();
         public Authorization()
         {
@@ -31,7 +21,6 @@ namespace praktika3
         private void OnlyEnglish(KeyPressEventArgs e)
         {
             string Symbol = e.KeyChar.ToString();
-            // \b \u0001
             if (Regex.Match(Symbol, @"[а-яА-Я]").Success)
                 e.Handled = true;
 
@@ -60,7 +49,6 @@ namespace praktika3
             if (connection.State != ConnectionState.Open)
             {
                 connection.Open();
-                //MessageBox.Show("DB connected!");
             }
         }
 
@@ -83,13 +71,9 @@ namespace praktika3
 
         private void LogIn()
         {
-            // создается новая таблица
             var users = new DataTable();
-
-            // команда поиска записи по логину
             var command = $"SELECT * FROM users WHERE login='{tbxLogin.Text}'";
 
-            // выполнение команды и запись в таблицу
             new SqlDataAdapter(command, connection).Fill(users);
 
             if (users.Rows.Count == 0)
@@ -113,7 +97,6 @@ namespace praktika3
         #region Events
         private void loggingIn_Click(object sender, EventArgs e)
         {
-            // case 1: singin
             if (singin.Checked && connection.State == ConnectionState.Open)
             {
                 if (tbxLogin.Text == "" || tbxPassword.Text == "")
@@ -123,7 +106,7 @@ namespace praktika3
                 }  
                 LogIn();
             }
-            // case 2: singup
+
             if (singup.Checked && connection.State == ConnectionState.Open)
             {
                 if (EmailCheck() && PasswordCheck() && isLoginUnique())
@@ -171,9 +154,6 @@ namespace praktika3
 
             this.Height = this.Height - 50;
             DBConnect();
-
-            // testing
-            //ProceedAppointment(1);
         }
 
         #endregion Events        
@@ -239,13 +219,9 @@ namespace praktika3
 
         private bool isLoginUnique()
         {
-            // создается новая таблица
             var users = new DataTable();
-
-            // команда поиска записи по логину
             var command = $"SELECT * FROM users WHERE login='{tbxLogin.Text}'";
 
-            // выполнение команды и запись в таблицу
             var adapter = new SqlDataAdapter(command, connection).Fill(users);
 
             if (users.Rows.Count != 0)
