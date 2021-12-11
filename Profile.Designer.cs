@@ -181,6 +181,7 @@
             this.tbxPass2.Name = "tbxPass2";
             this.tbxPass2.Size = new System.Drawing.Size(380, 31);
             this.tbxPass2.TabIndex = 5;
+            this.tbxPass2.UseSystemPasswordChar = true;
             // 
             // tbxPass1
             // 
@@ -189,6 +190,7 @@
             this.tbxPass1.Name = "tbxPass1";
             this.tbxPass1.Size = new System.Drawing.Size(380, 31);
             this.tbxPass1.TabIndex = 4;
+            this.tbxPass1.UseSystemPasswordChar = true;
             // 
             // tbxDadName
             // 
