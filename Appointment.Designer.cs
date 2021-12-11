@@ -58,6 +58,7 @@ namespace praktika3
             this.btnWorkingHours = new System.Windows.Forms.Button();
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
             this.recordsBox = new System.Windows.Forms.ListBox();
+            this.lblDataBase = new System.Windows.Forms.Label();
             this.backGroundColor.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -292,6 +293,7 @@ namespace praktika3
             // 
             this.backGroundColor.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(80)))), ((int)(((byte)(126)))), ((int)(((byte)(162)))));
             this.backGroundColor.Controls.Add(this.logOut);
+            this.backGroundColor.Controls.Add(this.lblDataBase);
             this.backGroundColor.Controls.Add(this.profile);
             this.backGroundColor.Controls.Add(this.showCanceled);
             this.backGroundColor.Controls.Add(this.tbxGroup);
@@ -331,9 +333,9 @@ namespace praktika3
             this.logOut.ForeColor = System.Drawing.SystemColors.Control;
             this.logOut.Image = global::praktika3.Properties.Resources.Logout;
             this.logOut.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.logOut.Location = new System.Drawing.Point(1310, 73);
+            this.logOut.Location = new System.Drawing.Point(1310, 106);
             this.logOut.Name = "logOut";
-            this.logOut.Size = new System.Drawing.Size(140, 28);
+            this.logOut.Size = new System.Drawing.Size(140, 46);
             this.logOut.TabIndex = 66;
             this.logOut.Text = "Выйти";
             this.logOut.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -346,9 +348,9 @@ namespace praktika3
             this.profile.ForeColor = System.Drawing.SystemColors.Control;
             this.profile.Image = global::praktika3.Properties.Resources.profile;
             this.profile.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.profile.Location = new System.Drawing.Point(1315, 26);
+            this.profile.Location = new System.Drawing.Point(1315, 59);
             this.profile.Name = "profile";
-            this.profile.Size = new System.Drawing.Size(135, 38);
+            this.profile.Size = new System.Drawing.Size(135, 56);
             this.profile.TabIndex = 65;
             this.profile.Text = "Профиль";
             this.profile.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -411,6 +413,21 @@ namespace praktika3
             this.recordsBox.TabIndex = 63;
             this.recordsBox.SelectedIndexChanged += new System.EventHandler(this.recordsBox_SelectedIndexChanged);
             // 
+            // lblDataBase
+            // 
+            this.lblDataBase.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.lblDataBase.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.lblDataBase.ForeColor = System.Drawing.SystemColors.Control;
+            this.lblDataBase.Image = global::praktika3.Properties.Resources.profile;
+            this.lblDataBase.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.lblDataBase.Location = new System.Drawing.Point(1290, 8);
+            this.lblDataBase.Name = "lblDataBase";
+            this.lblDataBase.Size = new System.Drawing.Size(160, 56);
+            this.lblDataBase.TabIndex = 65;
+            this.lblDataBase.Text = "База данных";
+            this.lblDataBase.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.lblDataBase.Click += new System.EventHandler(this.lblDataBase_Click);
+            // 
             // Appointment
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 25F);
@@ -463,6 +480,7 @@ namespace praktika3
         private System.Windows.Forms.CheckBox showCanceled;
         private System.Windows.Forms.Label logOut;
         private System.Windows.Forms.Label profile;
+        private System.Windows.Forms.Label lblDataBase;
     }
 }
 

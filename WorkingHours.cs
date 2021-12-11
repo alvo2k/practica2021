@@ -37,6 +37,5 @@ namespace praktika3
             Clipboard.SetText(linkLabel3.Text);
             MessageBox.Show("Скопированно!", "Добавленно в буфер обмена");
         }
-
     }
 }

@@ -2,7 +2,6 @@
 using System.Windows.Forms;
 using System.Net.Mail;
 using System.Net;
-using System.IO;
 using System.Text.RegularExpressions;
 using Microsoft.Data.SqlClient;
 using System.Data;
@@ -10,20 +9,6 @@ namespace praktika3
 {
     public partial class Appointment : Form
     {
-        /* 
-         
-        --- TODO----
-        
-        1. TimePicker
-        4. Проверка валидности времени
-        5. LoadListBox не выводить canceled
-        6. выводить canceled только для админа и если проставлен чекбокс
-        7. Ввести данные в textbox'ы из "профиля"
-        8. Если админ, то выключать отправить и очистить
-
-
-        Добавлена загрузка встечи из БД 
-        */
         Authorization _parentForm;
         SqlConnection _connection;
         int _userID;
@@ -38,8 +23,7 @@ namespace praktika3
         
         public Appointment(Authorization parent, SqlConnection connection, int userID)
         {
-            InitializeComponent();      
-            // для закрытия процесса родительской формы в formclosing
+            InitializeComponent();
             _parentForm = parent;
             _connection = connection;
             _userID = userID;            
@@ -51,7 +35,6 @@ namespace praktika3
         private void OnlyLetters(KeyPressEventArgs e)
         {
             string Symbol = e.KeyChar.ToString();
-            // \b \u0001
             if (!Regex.Match(Symbol, @"[а-яА-Я]|[a-zA-Z]").Success)
                 e.Handled = true;
             
@@ -62,7 +45,6 @@ namespace praktika3
         private void OnlyEnglish(KeyPressEventArgs e)
         {
             string Symbol = e.KeyChar.ToString();
-            // \b \u0001
             if (Regex.Match(Symbol, @"[а-яА-Я]").Success)
                 e.Handled = true;
 
@@ -75,7 +57,6 @@ namespace praktika3
             try
             {
                 MailAddress ma = new MailAddress(email);
-
                 return true;
             }
             catch
@@ -97,7 +78,7 @@ namespace praktika3
                 return true;
             }
 
-            return true; // testing false
+            return false;
         }
 
         private bool isUserAdmin()
@@ -118,38 +99,66 @@ namespace praktika3
 
         #region Save/Load
 
-        private void LoadSentRecord(int idMeeting) // DONE чтение из Meetings и запись в textbox`ы readonly
+        private void LoadSentRecord(int idMeeting)
         {
-            var selectedMeeting = new DataTable();
-            if (_connection.State != ConnectionState.Open) _connection.Open();
-            var command = $"SELECT * FROM Meetings WHERE idMeeting='{idMeeting}'";
-            new SqlDataAdapter(command, _connection).Fill(selectedMeeting);
-
-            tbxName.Text = selectedMeeting.Rows[0]["name"].ToString();
-            tbxName.ReadOnly = true;
-            tbxSurName.Text = selectedMeeting.Rows[0]["surname"].ToString();
-            tbxSurName.ReadOnly = true;
-            tbxDadName.Text = selectedMeeting.Rows[0]["middle_name"].ToString();
-            tbxDadName.ReadOnly = true;
-            tbxGroup.Text = selectedMeeting.Rows[0]["groupp"].ToString();
-            tbxGroup.ReadOnly = true;
-            tbxPosition.Text = selectedMeeting.Rows[0]["position"].ToString();
-            tbxPosition.ReadOnly = true;
-            tbxTheame.Text = selectedMeeting.Rows[0]["theame"].ToString();
-            tbxTheame.ReadOnly = true;
-            tbxEmail.Text = selectedMeeting.Rows[0]["email"].ToString();
-            tbxEmail.ReadOnly = true;
-            try
+            if (!showCanceled.Checked)
             {
-                dateTimePicker.Value = DateTime.Parse(selectedMeeting.Rows[0]["date_time"].ToString());
-            }
-            catch (Exception ex) { }
+                var selectedMeeting = new DataTable();
+                if (_connection.State != ConnectionState.Open) _connection.Open();
+                var command = $"SELECT * FROM Meetings WHERE idMeeting='{idMeeting}'";
+                new SqlDataAdapter(command, _connection).Fill(selectedMeeting);
 
-            //if (DateTime.Parse(lines[(index - 1) * 8 + 7]) > DateTime.Now) зачем??
-            //    dateTimePicker.Value = DateTime.Parse(lines[(index - 1) * 8 + 7]);
+                tbxName.Text = selectedMeeting.Rows[0]["name"].ToString();
+                tbxName.ReadOnly = true;
+                tbxSurName.Text = selectedMeeting.Rows[0]["surname"].ToString();
+                tbxSurName.ReadOnly = true;
+                tbxDadName.Text = selectedMeeting.Rows[0]["middle_name"].ToString();
+                tbxDadName.ReadOnly = true;
+                tbxGroup.Text = selectedMeeting.Rows[0]["groupp"].ToString();
+                tbxGroup.ReadOnly = true;
+                tbxPosition.Text = selectedMeeting.Rows[0]["position"].ToString();
+                tbxPosition.ReadOnly = true;
+                tbxTheame.Text = selectedMeeting.Rows[0]["theame"].ToString();
+                tbxTheame.ReadOnly = true;
+                tbxEmail.Text = selectedMeeting.Rows[0]["email"].ToString();
+                tbxEmail.ReadOnly = true;
+                try
+                {
+                    dateTimePicker.Value = DateTime.Parse(selectedMeeting.Rows[0]["date_time"].ToString());
+                }
+                catch { }
+            }
+
+            else
+            {
+                var selectedMeeting = new DataTable();
+                if (_connection.State != ConnectionState.Open) _connection.Open();
+                var command = $"SELECT * FROM outdated WHERE idMeeting='{idMeeting}'";
+                new SqlDataAdapter(command, _connection).Fill(selectedMeeting);
+
+                tbxName.Text = selectedMeeting.Rows[0]["name"].ToString();
+                tbxName.ReadOnly = true;
+                tbxSurName.Text = selectedMeeting.Rows[0]["surname"].ToString();
+                tbxSurName.ReadOnly = true;
+                tbxDadName.Text = selectedMeeting.Rows[0]["middle_name"].ToString();
+                tbxDadName.ReadOnly = true;
+                tbxGroup.Text = selectedMeeting.Rows[0]["groupp"].ToString();
+                tbxGroup.ReadOnly = true;
+                tbxPosition.Text = selectedMeeting.Rows[0]["position"].ToString();
+                tbxPosition.ReadOnly = true;
+                tbxTheame.Text = selectedMeeting.Rows[0]["theame"].ToString();
+                tbxTheame.ReadOnly = true;
+                tbxEmail.Text = selectedMeeting.Rows[0]["email"].ToString();
+                tbxEmail.ReadOnly = true;
+                try
+                {
+                    dateTimePicker.Value = DateTime.Parse(selectedMeeting.Rows[0]["date_time"].ToString());
+                }
+                catch { }
+            }
         }
 
-        private void LoadUnsent() // DONE получение данных из таблицы unsent и запись значений в textbox`ы 
+        private void LoadUnsent()
         {
             if (_connection.State != ConnectionState.Open) _connection.Open();
             var command = $"SELECT * FROM unsent";
@@ -172,7 +181,7 @@ namespace praktika3
             catch { }
         }
 
-        private void LoadListBox() // DONE загрузка встреч с Meetings в поля recordbox. Для админа все записи, для пользователя только его
+        private void LoadListBox()
         {
             if (_connection.State != ConnectionState.Open) _connection.Open();
 
@@ -182,8 +191,8 @@ namespace praktika3
             {
                 string command;
 
-                if (showCanceled.Checked) command = $"SELECT * FROM Meetings";
-                else command = $"SELECT * FROM Meetings WHERE canceled=0";
+                if (showCanceled.Checked) command = $"SELECT * FROM outdated";
+                else command = $"SELECT * FROM Meetings";
 
                 new SqlDataAdapter(command, _connection).Fill(meetings);
 
@@ -193,7 +202,7 @@ namespace praktika3
 
                 for (int q = 0; q < meetings.Rows.Count; q++)
                 {
-                    source.Rows.Add(meetings.Rows[q]["IdMeeting"], $"{meetings.Rows[q]["theame"]} {meetings.Rows[q]["date_time"]}"); // idMeeting, тема и время                                                                             
+                    source.Rows.Add(meetings.Rows[q]["IdMeeting"], $"{meetings.Rows[q]["theame"]} {meetings.Rows[q]["date_time"]}");                                                                             
                 }
 
                 recordsBox.ValueMember = "idMeeting";
@@ -202,7 +211,7 @@ namespace praktika3
             }
             else
             {
-                var command = $"SELECT * FROM Meetings WHERE userID='{_userID}' AND canceled=0";
+                var command = $"SELECT * FROM Meetings WHERE userID='{_userID}'";
                 new SqlDataAdapter(command, _connection).Fill(meetings);               
 
                 var source = new DataTable();
@@ -215,7 +224,7 @@ namespace praktika3
                 {
                     for (int q = 0; q < meetings.Rows.Count; q++)
                     {
-                        source.Rows.Add(meetings.Rows[q][0], $"{meetings.Rows[q][6]} {meetings.Rows[q][8]}"); // idMeeting, тема и время                                                                             
+                        source.Rows.Add(meetings.Rows[q][0], $"{meetings.Rows[q][6]} {meetings.Rows[q][8]}");                                                                             
                     }
                 }
                 recordsBox.ValueMember = "idMeeting";
@@ -224,11 +233,10 @@ namespace praktika3
             }
         }
 
-        private void SaveUnsent() // DONE при закрытии формы запись данных из полей tbx в таблицу unsent
+        private void SaveUnsent()
         {
             if (_connection.State != ConnectionState.Open) _connection.Open();
 
-            // очистка таблицы, чтобы всегда была только одна запись
             var clear = "DELETE FROM unsent";
             new SqlCommand(clear, _connection).ExecuteNonQuery();
 
@@ -248,7 +256,7 @@ namespace praktika3
             cmd.ExecuteNonQuery();
         }
 
-        private void SaveMeeting() // при нажатии отправки отправляется письмо и запрос в Meetings
+        private void SaveMeeting()
         {
             if (_connection.State != ConnectionState.Open) _connection.Open();
             var command = $"INSERT INTO Meetings (name, surname, middle_name, groupp, position, theame, email, date_time, userID) VALUES (@name, @surname, @middle_name, @group, @position, @theame, @email, @date_time, @userid)";
@@ -266,22 +274,40 @@ namespace praktika3
 
             cmd.ExecuteNonQuery();
 
-            LoadListBox(); // update
+            LoadListBox();
             recordsBox.SelectedIndex = recordsBox.Items.Count - 1;
         }
 
         private void CancelMeeting(int idMeeting)
         {
             if (_connection.State != ConnectionState.Open) _connection.Open();
-            var command = $"UPDATE Meetings SET canceled = 1 WHERE idMeeting='{idMeeting}'";
 
-            var cmd = new SqlCommand(command, _connection);
+            var selectedMeeting = new DataTable();
+            var getMeeting = $"SELECT IdMeeting, name, surname, middle_name, groupp, position, theame, email, date_time, userID FROM Meetings WHERE IdMeeting='{idMeeting}'";
+            new SqlDataAdapter(getMeeting, _connection).Fill(selectedMeeting);
+
+            var addOutdatedMeeting = $"INSERT INTO outdated (IdMeeting, name, surname, middle_name, groupp, position, theame, email, date_time, userID) VALUES (@IdMeeting, @name, @surname, @middle_name, @group, @position, @theame, @email, @date_time, @userid)";
+            var cmd = new SqlCommand(addOutdatedMeeting, _connection);
+            cmd.Parameters.Add("@IdMeeting", SqlDbType.NVarChar).Value = selectedMeeting.Rows[0]["IdMeeting"];
+            cmd.Parameters.Add("@name", SqlDbType.NVarChar).Value = selectedMeeting.Rows[0]["name"];
+            cmd.Parameters.Add("@surname", SqlDbType.NVarChar).Value = selectedMeeting.Rows[0]["surname"];
+            cmd.Parameters.Add("@middle_name", SqlDbType.NVarChar).Value = selectedMeeting.Rows[0]["middle_name"];
+            cmd.Parameters.Add("@group", SqlDbType.NVarChar).Value = selectedMeeting.Rows[0]["groupp"];
+            cmd.Parameters.Add("@position", SqlDbType.NVarChar).Value = selectedMeeting.Rows[0]["position"];
+            cmd.Parameters.Add("@theame", SqlDbType.NVarChar).Value = selectedMeeting.Rows[0]["theame"];
+            cmd.Parameters.Add("@email", SqlDbType.NVarChar).Value = selectedMeeting.Rows[0]["email"];
+            cmd.Parameters.Add("@date_time", SqlDbType.DateTime).Value = selectedMeeting.Rows[0]["date_time"].ToString();
+            cmd.Parameters.Add("@userid", SqlDbType.Int).Value = _userID;
+
             cmd.ExecuteNonQuery();
+
+            var commandDeleate = $"DELETE FROM Meetings WHERE idMeeting='{idMeeting}'";
+            new SqlCommand(commandDeleate, _connection).ExecuteNonQuery();
 
             LoadListBox(); // update
         }
 
-        private void RemoveUnsent() // после отправки формы удалить черновик
+        private void RemoveUnsent()
         {
             if (_connection.State != ConnectionState.Open) _connection.Open();
             var clear = "DELETE FROM unsent";
@@ -433,16 +459,18 @@ namespace praktika3
             dateTimePicker.MaxDate = dateTimePicker.Value.AddDays(45);
 
             _isAdmin = isUserAdmin();
-            LoadUnsent(); // загрузка с unsent незавершенной анкеты (черновик)
-            LoadListBox(); // чтение Meetings и загрузка встреч в recordBox
+            LoadUnsent();
+            LoadListBox();
             if(!_isAdmin)
             {
                 showCanceled.Enabled = false;
                 showCanceled.Visible = false;
+                lblDataBase.Enabled = false;
+                lblDataBase.Visible = false;
             }
         }
 
-        private void Submit_Click(object sender, EventArgs e) // DONE
+        private void Submit_Click(object sender, EventArgs e)
         {
             if (!IsHasFreeTime())
             {
@@ -468,7 +496,7 @@ namespace praktika3
             SendMailToUser(letter.Create);
         }
 
-        private void cancelRecord_Click(object sender, EventArgs e) // TODO
+        private void cancelRecord_Click(object sender, EventArgs e)
         {
             DataRowView rowView = recordsBox.SelectedItem as DataRowView;
 
@@ -525,10 +553,20 @@ namespace praktika3
                     DataRowView rowView = recordsBox.SelectedItem as DataRowView;
                     LoadSentRecord(Convert.ToInt32(rowView[0]));
                 }
-                if(_isAdmin)
+                if(_isAdmin && !showCanceled.Checked)
                 {
                     cancelRecord.Enabled = true;
                     cancelRecord.Visible = true;
+                    Submit.Enabled = false;
+                    Submit.Visible = false;
+                    clearForm.Enabled = false;
+                    clearForm.Visible = false;
+                    dateTimePicker.Enabled = false;
+                    DataRowView rowView = recordsBox.SelectedItem as DataRowView;
+                    LoadSentRecord(Convert.ToInt32(rowView[0]));
+                }
+                if (_isAdmin && showCanceled.Checked)
+                {
                     Submit.Enabled = false;
                     Submit.Visible = false;
                     clearForm.Enabled = false;
@@ -548,6 +586,18 @@ namespace praktika3
         private void showCanceled_CheckedChanged(object sender, EventArgs e)
         {
             LoadListBox();
+
+            if (showCanceled.Checked)
+            {
+                cancelRecord.Enabled = false;
+                cancelRecord.Visible = false;
+            }
+            
+            else
+            {
+                cancelRecord.Enabled = true;
+                cancelRecord.Visible = true;
+            }
         }
 
         private void logOut_Click(object sender, EventArgs e)
@@ -563,15 +613,18 @@ namespace praktika3
             profile.Show();
         }
 
+        private void lblDataBase_Click(object sender, EventArgs e)
+        {
+            Tables tbx = new Tables(this.Left, this.Top, this.Height, this.Width, _userID, _connection);
+            tbx.Show();
+        }
+
         private void Appointment_FormClosing(object sender, FormClosingEventArgs e)
         {
             _parentForm.Close();
             SaveUnsent();
             _connection.Dispose();
         }
-
-
-
 
         #endregion Events
 
