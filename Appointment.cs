@@ -2,7 +2,6 @@
 using System.Windows.Forms;
 using System.Net.Mail;
 using System.Net;
-using System.IO;
 using System.Text.RegularExpressions;
 using Microsoft.Data.SqlClient;
 using System.Data;
@@ -10,20 +9,6 @@ namespace praktika3
 {
     public partial class Appointment : Form
     {
-        /* 
-         
-        --- TODO----
-        
-        1. TimePicker
-        4. Проверка валидности времени
-        5. LoadListBox не выводить canceled
-        6. выводить canceled только для админа и если проставлен чекбокс
-        7. Ввести данные в textbox'ы из "профиля"
-        8. Если админ, то выключать отправить и очистить
-
-
-        Добавлена загрузка встечи из БД 
-        */
         Authorization _parentForm;
         SqlConnection _connection;
         int _userID;
@@ -490,6 +475,8 @@ namespace praktika3
             {
                 showCanceled.Enabled = false;
                 showCanceled.Visible = false;
+                lblDataBase.Enabled = false;
+                lblDataBase.Visible = false;
             }
         }
 

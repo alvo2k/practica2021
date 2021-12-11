@@ -26,6 +26,19 @@ namespace praktika3
         {
             this.Left = left + width / 2 - (this.Width / 2);
             this.Top = top + height / 2 - (this.Height / 2);
+            LoadData();
+        }
+
+        private void LoadData()
+        {
+            var tbl = new DataTable();
+            string getData = $"SELECT * FROM users WHERE userID={_userID}";
+
+            new SqlDataAdapter(getData, _connection).Fill(tbl);
+
+            tbxName.Text = tbl.Rows[0]["name"].ToString();
+            tbxSurName.Text = tbl.Rows[0]["surname"].ToString();
+            tbxDadName.Text = tbl.Rows[0]["middle_name"].ToString();
         }
 
         private void OnlyLetters(KeyPressEventArgs e)
