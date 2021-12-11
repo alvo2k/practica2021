@@ -2,6 +2,7 @@
 using System.Data;
 using Microsoft.Data.SqlClient;
 using System.Windows.Forms;
+using Microsoft.VisualBasic;
 
 namespace praktika3
 {
@@ -136,7 +137,44 @@ namespace praktika3
 
         private void btnSearch_Click(object sender, EventArgs e)
         {
+            string input = Interaction.InputBox("Искать среди таблицы по фамилии или логину (email)", "Найти");
+            if (input.Length == 0)
+            {
+                MessageBox.Show("Введите значение для поиска!", "Пустой запрос");
+            }
+            if (input != null)
+            {
+                var data = new DataTable();
+                var result = new DataTable();
+                var dataString = $"SELECT * FROM {activeTabel}";
+                new SqlDataAdapter(dataString, _connection).Fill(data);
 
+                if (activeTabel == "users")
+                {
+                    result = data.Clone();
+                    for (int i = 0; i < data.Rows.Count; i++)
+                    {
+                        if (data.Rows[i]["login"].ToString() == input || data.Rows[i]["surname"].ToString() == input)
+                        {
+                            result.Rows.Add(data.Rows[i].ItemArray);
+                        }
+                    }
+                }
+
+                else
+                {
+                    result = data.Clone();
+                    for (int i = 0; i < data.Rows.Count; i++)
+                    {
+                        if (data.Rows[i]["email"].ToString() == input || data.Rows[i]["surname"].ToString() == input)
+                        {                            
+                            result.Rows.Add(data.Rows[i].ItemArray);
+                        }
+                    }
+                }
+
+                dataGridView1.DataSource = result;
+            }
         }
 
         private void btnSave_Click(object sender, EventArgs e)
